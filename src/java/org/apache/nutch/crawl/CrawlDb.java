@@ -156,7 +156,7 @@ public class CrawlDb extends NutchTool implements Tool {
     boolean preserveBackup = job.getBoolean("db.preserve.backup", true);
 
     Path newCrawlDb = FileOutputFormat.getOutputPath(job);
-    FileSystem fs = new JobClient(job).getFs();
+    FileSystem fs = FileSystem.get(job);
     Path old = new Path(crawlDb, "old");
     Path current = new Path(crawlDb, CURRENT_NAME);
     if (fs.exists(current)) {

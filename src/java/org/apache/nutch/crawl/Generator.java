@@ -191,7 +191,7 @@ public class Generator extends NutchTool implements Tool {
         return;
       }
 
-      LongWritable oldGenTime = (LongWritable) crawlDatum.getMetaData().get(
+      LongWritable oldGenTime = (LongWritable) ((MapWritable)crawlDatum.getMetaData()).get(
           Nutch.WRITABLE_GENERATE_TIME_KEY);
       if (oldGenTime != null) { // awaiting fetch & update
         if (oldGenTime.get() + genDelay > curTime) // still wait for

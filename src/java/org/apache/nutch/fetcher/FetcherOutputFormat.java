@@ -49,9 +49,9 @@ public class FetcherOutputFormat implements OutputFormat<Text, NutchWritable> {
     if ((out == null) && (job.getNumReduceTasks() != 0)) {
       throw new InvalidJobConfException("Output directory not set in JobConf.");
     }
-    if (fs == null) {
-      fs = out.getFileSystem(job);
-    }
+    //if (fs == null) {
+      fs = FileSystem.get(job);
+    //}
     if (fs.exists(new Path(out, CrawlDatum.FETCH_DIR_NAME)))
       throw new IOException("Segment already fetched!");
   }

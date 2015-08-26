@@ -67,7 +67,7 @@ public final class Content implements Writable {
   }
 
   public Content(String url, String base, byte[] content, String contentType,
-      Metadata metadata, Configuration conf) {
+                 Metadata metadata, Configuration conf) {
 
     if (url == null)
       throw new IllegalArgumentException("null url");
@@ -90,38 +90,38 @@ public final class Content implements Writable {
   private final void readFieldsCompressed(DataInput in) throws IOException {
     byte oldVersion = in.readByte();
     switch (oldVersion) {
-    case 0:
-    case 1:
-      url = Text.readString(in); // read url
-      base = Text.readString(in); // read base
+      case 0:
+      case 1:
+        url = Text.readString(in); // read url
+        base = Text.readString(in); // read base
 
-      content = new byte[in.readInt()]; // read content
-      in.readFully(content);
+        content = new byte[in.readInt()]; // read content
+        in.readFully(content);
 
-      contentType = Text.readString(in); // read contentType
-      // reconstruct metadata
-      int keySize = in.readInt();
-      String key;
-      for (int i = 0; i < keySize; i++) {
-        key = Text.readString(in);
-        int valueSize = in.readInt();
-        for (int j = 0; j < valueSize; j++) {
-          metadata.add(key, Text.readString(in));
+        contentType = Text.readString(in); // read contentType
+        // reconstruct metadata
+        int keySize = in.readInt();
+        String key;
+        for (int i = 0; i < keySize; i++) {
+          key = Text.readString(in);
+          int valueSize = in.readInt();
+          for (int j = 0; j < valueSize; j++) {
+            metadata.add(key, Text.readString(in));
+          }
         }
-      }
-      break;
-    case 2:
-      url = Text.readString(in); // read url
-      base = Text.readString(in); // read base
+        break;
+      case 2:
+        url = Text.readString(in); // read url
+        base = Text.readString(in); // read base
 
-      content = new byte[in.readInt()]; // read content
-      in.readFully(content);
+        content = new byte[in.readInt()]; // read content
+        in.readFully(content);
 
-      contentType = Text.readString(in); // read contentType
-      metadata.readFields(in); // read meta data
-      break;
-    default:
-      throw new VersionMismatchException((byte) 2, oldVersion);
+        contentType = Text.readString(in); // read contentType
+        metadata.readFields(in); // read meta data
+        break;
+      default:
+        throw new VersionMismatchException((byte) 2, oldVersion);
     }
 
   }
@@ -132,25 +132,25 @@ public final class Content implements Writable {
     if (sizeOrVersion < 0) { // version
       version = sizeOrVersion;
       switch (version) {
-      case VERSION:
-        url = Text.readString(in);
-        base = Text.readString(in);
+        case VERSION:
+          url = Text.readString(in);
+          base = Text.readString(in);
 
-        content = new byte[in.readInt()];
-        in.readFully(content);
+          content = new byte[in.readInt()];
+          in.readFully(content);
 
-        contentType = Text.readString(in);
-        metadata.readFields(in);
-        break;
-      default:
-        throw new VersionMismatchException((byte) VERSION, (byte) version);
+          contentType = Text.readString(in);
+          metadata.readFields(in);
+          break;
+        default:
+          throw new VersionMismatchException((byte) VERSION, (byte) version);
       }
     } else { // size
       byte[] compressed = new byte[sizeOrVersion];
       in.readFully(compressed, 0, compressed.length);
       ByteArrayInputStream deflated = new ByteArrayInputStream(compressed);
       DataInput inflater = new DataInputStream(
-          new InflaterInputStream(deflated));
+              new InflaterInputStream(deflated));
       readFieldsCompressed(inflater);
     }
   }
@@ -203,7 +203,7 @@ public final class Content implements Writable {
 
   /**
    * The media type of the retrieved content.
-   * 
+   *
    * @see <a href="http://www.iana.org/assignments/media-types/">
    *      http://www.iana.org/assignments/media-types/</a>
    */
@@ -231,9 +231,9 @@ public final class Content implements Writable {
     }
     Content that = (Content) o;
     return this.url.equals(that.url) && this.base.equals(that.base)
-        && Arrays.equals(this.getContent(), that.getContent())
-        && this.contentType.equals(that.contentType)
-        && this.metadata.equals(that.metadata);
+            && Arrays.equals(this.getContent(), that.getContent())
+            && this.contentType.equals(that.contentType)
+            && this.metadata.equals(that.metadata);
   }
 
   public String toString() {
@@ -275,7 +275,7 @@ public final class Content implements Writable {
       System.out.println("Reading from file: " + file);
 
       ArrayFile.Reader contents = new ArrayFile.Reader(fs, file.toString(),
-          conf);
+              conf);
 
       Content content = new Content();
       contents.get(recno, content);

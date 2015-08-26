@@ -275,7 +275,7 @@ public class LinkDb extends NutchTool implements Tool,
 
   public static void install(JobConf job, Path linkDb) throws IOException {
     Path newLinkDb = FileOutputFormat.getOutputPath(job);
-    FileSystem fs = new JobClient(job).getFs();
+    FileSystem fs = FileSystem.get(job);
     Path old = new Path(linkDb, "old");
     Path current = new Path(linkDb, CURRENT_NAME);
     if (fs.exists(current)) {

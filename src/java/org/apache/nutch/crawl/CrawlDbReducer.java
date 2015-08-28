@@ -73,7 +73,7 @@ public class CrawlDbReducer implements
     byte[] signature = null;
     boolean multiple = false; // avoid deep copy when only single value exists
     linked.clear();
-    org.apache.hadoop.io.MapWritable metaFromParse = null;
+    MapWritable metaFromParse = null;
 
     while (values.hasNext()) {
       CrawlDatum datum = values.next();

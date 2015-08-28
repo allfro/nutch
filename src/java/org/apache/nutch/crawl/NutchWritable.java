@@ -33,7 +33,7 @@ public class NutchWritable extends GenericWritableConfigurable {
         org.apache.hadoop.io.BytesWritable.class,
         org.apache.hadoop.io.FloatWritable.class,
         org.apache.hadoop.io.IntWritable.class,
-        org.apache.hadoop.io.MapWritable.class,
+        MapWritable.class,
         org.apache.hadoop.io.Text.class, org.apache.hadoop.io.MD5Hash.class,
         org.apache.nutch.crawl.CrawlDatum.class,
         org.apache.nutch.crawl.Inlink.class,

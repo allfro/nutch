@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Map.Entry;
 
-import org.apache.hadoop.io.MapWritable;
+import org.apache.nutch.crawl.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
@@ -50,7 +50,7 @@ public class Outlink implements Writable {
     anchor = Text.readString(in);
     boolean hasMD = in.readBoolean();
     if (hasMD) {
-      md = new org.apache.hadoop.io.MapWritable();
+      md = new MapWritable();
       md.readFields(in);
     } else
       md = null;
@@ -62,7 +62,7 @@ public class Outlink implements Writable {
     Text.skip(in); // skip anchor
     boolean hasMD = in.readBoolean();
     if (hasMD) {
-      MapWritable metadata = new org.apache.hadoop.io.MapWritable();
+      MapWritable metadata = new MapWritable();
       metadata.readFields(in);
       ;
     }

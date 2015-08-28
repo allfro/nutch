@@ -181,7 +181,7 @@ public class MimeAdaptiveFetchSchedule extends AdaptiveFetchSchedule {
     CrawlDatum p = new CrawlDatum(1, 3600 * 24 * 30, 1.0f);
 
     // Set a default MIME-type to test with
-    org.apache.hadoop.io.MapWritable x = new org.apache.hadoop.io.MapWritable();
+    MapWritable x = new MapWritable();
     x.put(HttpHeaders.WRITABLE_CONTENT_TYPE, new Text(
         "text/html; charset=utf-8"));
     p.setMetaData(x);

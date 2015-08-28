@@ -18,6 +18,7 @@
 package org.apache.nutch.parse;
 
 // Commons Logging imports
+import org.apache.nutch.crawl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.hadoop.io.*;
@@ -27,7 +28,6 @@ import org.apache.hadoop.io.SequenceFile.Metadata;
 import org.apache.hadoop.io.compress.DefaultCodec;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.mapred.*;
-import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.fetcher.Fetcher;
 import org.apache.nutch.scoring.ScoringFilterException;
 import org.apache.nutch.scoring.ScoringFilters;
@@ -242,7 +242,7 @@ public class ParseOutputFormat implements OutputFormat<Text, Parse> {
           // see if the outlink has any metadata attached
           // and if so pass that to the crawldatum so that
           // the initial score or distribution can use that
-          MapWritable outlinkMD = links[i].getMetadata();
+          org.apache.nutch.crawl.MapWritable outlinkMD = links[i].getMetadata();
           if (outlinkMD != null) {
             target.getMetaData().putAll(outlinkMD);
           }

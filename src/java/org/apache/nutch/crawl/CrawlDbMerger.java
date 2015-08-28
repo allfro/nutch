@@ -61,7 +61,7 @@ public class CrawlDbMerger extends Configured implements Tool {
 
   public static class Merger extends MapReduceBase implements
       Reducer<Text, CrawlDatum, Text, CrawlDatum> {
-    private org.apache.hadoop.io.MapWritable meta;
+    private MapWritable meta;
     private CrawlDatum res = new CrawlDatum();
     private FetchSchedule schedule;
 
@@ -77,7 +77,7 @@ public class CrawlDbMerger extends Configured implements Tool {
         throws IOException {
       long resTime = 0L;
       boolean resSet = false;
-      meta = new org.apache.hadoop.io.MapWritable();
+      meta = new MapWritable();
       while (values.hasNext()) {
         CrawlDatum val = values.next();
         if (!resSet) {

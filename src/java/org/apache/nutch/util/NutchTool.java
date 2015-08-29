@@ -29,9 +29,8 @@ import org.apache.nutch.metadata.Nutch;
 
 public abstract class NutchTool extends Configured {
 
-  protected HashMap<String, Object> results = new HashMap<String, Object>();
-  protected Map<String, Object> status = Collections
-      .synchronizedMap(new HashMap<String, Object>());
+  protected HashMap<String, Object> results = new HashMap<>();
+  protected Map<String, Object> status = Collections.synchronizedMap(new HashMap<>());
   protected Job currentJob;
   protected int numJobs;
   protected int currentJobNum;
@@ -42,8 +41,8 @@ public abstract class NutchTool extends Configured {
   public abstract Map<String, Object> run(Map<String, String> args, String crawlId)
       throws Exception;
 
-  public NutchTool(Configuration conf){
-    super(conf);
+  public NutchTool(Configuration configuration){
+    super(configuration);
   }
 
   public NutchTool(){
@@ -52,24 +51,21 @@ public abstract class NutchTool extends Configured {
 
   /** Returns relative progress of the tool, a float in range [0,1]. */
   public float getProgress() {
-    float res = 0;
+    float progress = 0;
     if (currentJob != null) {
       try {
-        res = (currentJob.mapProgress() + currentJob.reduceProgress()) / 2.0f;
-      } catch (IOException e) {
+        progress = (currentJob.mapProgress() + currentJob.reduceProgress()) / 2.0f;
+      } catch (IOException | IllegalStateException e) {
         e.printStackTrace();
-        res = 0;
-      } catch (IllegalStateException ile) {
-        ile.printStackTrace();
-        res = 0;
+        progress = 0;
       }
     }
     // take into account multiple jobs
     if (numJobs > 1) {
-      res = (currentJobNum + res) / (float) numJobs;
+      progress = (currentJobNum + progress) / (float) numJobs;
     }
-    status.put(Nutch.STAT_PROGRESS, res);
-    return res;
+    status.put(Nutch.STAT_PROGRESS, progress);
+    return progress;
   }
 
   /** Returns current status of the running tool. */

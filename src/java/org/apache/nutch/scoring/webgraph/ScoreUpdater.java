@@ -28,6 +28,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MapFileOutputFormat;
+import org.apache.nutch.mapper.ScoreUpdaterMapper;
+import org.apache.nutch.reducer.ScoreUpdaterReducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -37,23 +44,12 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.ObjectWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileOutputFormat;
-import org.apache.hadoop.mapred.JobClient;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.MapFileOutputFormat;
-import org.apache.hadoop.mapred.Mapper;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reducer;
-import org.apache.hadoop.mapred.Reporter;
-import org.apache.hadoop.mapred.SequenceFileInputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.CrawlDb;
 import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
 import org.apache.nutch.util.TimingUtil;
 
 /**
@@ -61,193 +57,121 @@ import org.apache.nutch.util.TimingUtil;
  * Any score that is not in the node database is set to the clear score in the
  * crawl database.
  */
-public class ScoreUpdater extends Configured implements Tool,
-    Mapper<Text, Writable, Text, ObjectWritable>,
-    Reducer<Text, ObjectWritable, Text, CrawlDatum> {
+public class ScoreUpdater extends Configured implements Tool {
 
-  public static final Logger LOG = LoggerFactory.getLogger(ScoreUpdater.class);
+    public static final Logger LOG = LoggerFactory.getLogger(ScoreUpdater.class);
 
-  private JobConf conf;
-  private float clearScore = 0.0f;
+    /**
+     * Updates the inlink score in the web graph node databsae into the crawl
+     * database.
+     *
+     * @param crawlDbDir
+     *          The crawl database to update
+     * @param webGraphDbDir
+     *          The webgraph database to use.
+     *
+     * @throws IOException
+     *           If an error occurs while updating the scores.
+     */
+    public void update(Path crawlDbDir, Path webGraphDbDir) throws IOException {
 
-  public void configure(JobConf conf) {
-    this.conf = conf;
-    clearScore = conf.getFloat("link.score.updater.clear.score", 0.0f);
-  }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long start = System.currentTimeMillis();
+        LOG.info("ScoreUpdater: starting at {}", sdf.format(start));
 
-  /**
-   * Changes input into ObjectWritables.
-   */
-  public void map(Text key, Writable value,
-      OutputCollector<Text, ObjectWritable> output, Reporter reporter)
-      throws IOException {
+        Configuration configuration = getConf();
+        FileSystem fs = FileSystem.get(configuration);
 
-    ObjectWritable objWrite = new ObjectWritable();
-    objWrite.set(value);
-    output.collect(key, objWrite);
-  }
+        // create a temporary crawldb with the new scores
+        LOG.info("Running crawl database update {}", crawlDbDir);
+        Path nodeDb = new Path(webGraphDbDir, WebGraph.NODE_DIR);
+        Path crawlDbCurrent = new Path(crawlDbDir, CrawlDb.CURRENT_NAME);
+        Path newCrawlDb = new Path(crawlDbDir, Integer.toString(new Random()
+                .nextInt(Integer.MAX_VALUE)));
 
-  /**
-   * Creates new CrawlDatum objects with the updated score from the NodeDb or
-   * with a cleared score.
-   */
-  public void reduce(Text key, Iterator<ObjectWritable> values,
-      OutputCollector<Text, CrawlDatum> output, Reporter reporter)
-      throws IOException {
+        // run the updater job outputting to the temp crawl database
+        Job updaterJob = Job.getInstance(configuration);
+        updaterJob.setJobName("Update CrawlDb from WebGraph");
+        FileInputFormat.addInputPath(updaterJob, crawlDbCurrent);
+        FileInputFormat.addInputPath(updaterJob, nodeDb);
+        FileOutputFormat.setOutputPath(updaterJob, newCrawlDb);
+        updaterJob.setInputFormatClass(SequenceFileInputFormat.class);
+        updaterJob.setMapperClass(ScoreUpdaterMapper.class);
+        updaterJob.setReducerClass(ScoreUpdaterReducer.class);
+        updaterJob.setMapOutputKeyClass(Text.class);
+        updaterJob.setMapOutputValueClass(ObjectWritable.class);
+        updaterJob.setOutputKeyClass(Text.class);
+        updaterJob.setOutputValueClass(CrawlDatum.class);
+        updaterJob.setOutputFormatClass(MapFileOutputFormat.class);
 
-    String url = key.toString();
-    Node node = null;
-    CrawlDatum datum = null;
+        try {
+            updaterJob.waitForCompletion(true);
+        } catch (Exception e) {
+            LOG.error(StringUtils.stringifyException(e));
 
-    // set the node and the crawl datum, should be one of each unless no node
-    // for url in the crawldb
-    while (values.hasNext()) {
-      ObjectWritable next = values.next();
-      Object value = next.get();
-      if (value instanceof Node) {
-        node = (Node) value;
-      } else if (value instanceof CrawlDatum) {
-        datum = (CrawlDatum) value;
-      }
+            // remove the temp crawldb on error
+            if (fs.exists(newCrawlDb)) {
+                fs.delete(newCrawlDb, true);
+            }
+            throw new IOException(e);
+        }
+
+        // install the temp crawl database
+        LOG.info("ScoreUpdater: installing new crawl database {}", crawlDbDir);
+        CrawlDb.install(updaterJob, crawlDbDir);
+
+        long end = System.currentTimeMillis();
+        LOG.info("ScoreUpdater: finished at {}, elapsed: {}",
+                sdf.format(end),
+                TimingUtil.elapsedTime(start, end));
     }
 
-    // datum should never be null, could happen if somehow the url was
-    // normalized or changed after being pulled from the crawldb
-    if (datum != null) {
-
-      if (node != null) {
-
-        // set the inlink score in the nodedb
-        float inlinkScore = node.getInlinkScore();
-        datum.setScore(inlinkScore);
-        LOG.debug(url + ": setting to score " + inlinkScore);
-      } else {
-
-        // clear out the score in the crawldb
-        datum.setScore(clearScore);
-        LOG.debug(url + ": setting to clear score of " + clearScore);
-      }
-
-      output.collect(key, datum);
-    } else {
-      LOG.debug(url + ": no datum");
-    }
-  }
-
-  public void close() {
-  }
-
-  /**
-   * Updates the inlink score in the web graph node databsae into the crawl
-   * database.
-   * 
-   * @param crawlDb
-   *          The crawl database to update
-   * @param webGraphDb
-   *          The webgraph database to use.
-   * 
-   * @throws IOException
-   *           If an error occurs while updating the scores.
-   */
-  public void update(Path crawlDb, Path webGraphDb) throws IOException {
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    long start = System.currentTimeMillis();
-    LOG.info("ScoreUpdater: starting at " + sdf.format(start));
-
-    Configuration conf = getConf();
-    FileSystem fs = FileSystem.get(conf);
-
-    // create a temporary crawldb with the new scores
-    LOG.info("Running crawldb update " + crawlDb);
-    Path nodeDb = new Path(webGraphDb, WebGraph.NODE_DIR);
-    Path crawlDbCurrent = new Path(crawlDb, CrawlDb.CURRENT_NAME);
-    Path newCrawlDb = new Path(crawlDb, Integer.toString(new Random()
-        .nextInt(Integer.MAX_VALUE)));
-
-    // run the updater job outputting to the temp crawl database
-    JobConf updater = new NutchJob(conf);
-    updater.setJobName("Update CrawlDb from WebGraph");
-    FileInputFormat.addInputPath(updater, crawlDbCurrent);
-    FileInputFormat.addInputPath(updater, nodeDb);
-    FileOutputFormat.setOutputPath(updater, newCrawlDb);
-    updater.setInputFormat(SequenceFileInputFormat.class);
-    updater.setMapperClass(ScoreUpdater.class);
-    updater.setReducerClass(ScoreUpdater.class);
-    updater.setMapOutputKeyClass(Text.class);
-    updater.setMapOutputValueClass(ObjectWritable.class);
-    updater.setOutputKeyClass(Text.class);
-    updater.setOutputValueClass(CrawlDatum.class);
-    updater.setOutputFormat(MapFileOutputFormat.class);
-
-    try {
-      JobClient.runJob(updater);
-    } catch (IOException e) {
-      LOG.error(StringUtils.stringifyException(e));
-
-      // remove the temp crawldb on error
-      if (fs.exists(newCrawlDb)) {
-        fs.delete(newCrawlDb, true);
-      }
-      throw e;
+    public static void main(String[] args) throws Exception {
+        int res = ToolRunner.run(NutchConfiguration.create(), new ScoreUpdater(), args);
+        System.exit(res);
     }
 
-    // install the temp crawl database
-    LOG.info("ScoreUpdater: installing new crawldb " + crawlDb);
-    CrawlDb.install(updater, crawlDb);
+    /**
+     * Runs the ScoreUpdater tool.
+     */
+    public int run(String[] args) throws Exception {
 
-    long end = System.currentTimeMillis();
-    LOG.info("ScoreUpdater: finished at " + sdf.format(end) + ", elapsed: "
-        + TimingUtil.elapsedTime(start, end));
-  }
+        Options options = new Options();
+        OptionBuilder.withArgName("help");
+        OptionBuilder.withDescription("show this help message");
+        Option helpOpts = OptionBuilder.create("help");
+        options.addOption(helpOpts);
 
-  public static void main(String[] args) throws Exception {
-    int res = ToolRunner.run(NutchConfiguration.create(), new ScoreUpdater(),
-        args);
-    System.exit(res);
-  }
+        OptionBuilder.withArgName("crawldb");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("the crawldb to use");
+        Option crawlDbOpts = OptionBuilder.create("crawldb");
+        options.addOption(crawlDbOpts);
 
-  /**
-   * Runs the ScoreUpdater tool.
-   */
-  public int run(String[] args) throws Exception {
+        OptionBuilder.withArgName("webgraphdb");
+        OptionBuilder.hasArg();
+        OptionBuilder.withDescription("the webgraphdb to use");
+        Option webGraphOpts = OptionBuilder.create("webgraphdb");
+        options.addOption(webGraphOpts);
 
-    Options options = new Options();
-    OptionBuilder.withArgName("help");
-    OptionBuilder.withDescription("show this help message");
-    Option helpOpts = OptionBuilder.create("help");
-    options.addOption(helpOpts);
+        CommandLineParser parser = new GnuParser();
+        try {
 
-    OptionBuilder.withArgName("crawldb");
-    OptionBuilder.hasArg();
-    OptionBuilder.withDescription("the crawldb to use");
-    Option crawlDbOpts = OptionBuilder.create("crawldb");
-    options.addOption(crawlDbOpts);
+            CommandLine line = parser.parse(options, args);
+            if (line.hasOption("help") || !line.hasOption("webgraphdb")
+                    || !line.hasOption("crawldb")) {
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp("ScoreUpdater", options);
+                return -1;
+            }
 
-    OptionBuilder.withArgName("webgraphdb");
-    OptionBuilder.hasArg();
-    OptionBuilder.withDescription("the webgraphdb to use");
-    Option webGraphOpts = OptionBuilder.create("webgraphdb");
-    options.addOption(webGraphOpts);
-
-    CommandLineParser parser = new GnuParser();
-    try {
-
-      CommandLine line = parser.parse(options, args);
-      if (line.hasOption("help") || !line.hasOption("webgraphdb")
-          || !line.hasOption("crawldb")) {
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("ScoreUpdater", options);
-        return -1;
-      }
-
-      String crawlDb = line.getOptionValue("crawldb");
-      String webGraphDb = line.getOptionValue("webgraphdb");
-      update(new Path(crawlDb), new Path(webGraphDb));
-      return 0;
-    } catch (Exception e) {
-      LOG.error("ScoreUpdater: " + StringUtils.stringifyException(e));
-      return -1;
+            String crawlDb = line.getOptionValue("crawldb");
+            String webGraphDb = line.getOptionValue("webgraphdb");
+            update(new Path(crawlDb), new Path(webGraphDb));
+            return 0;
+        } catch (Exception e) {
+            LOG.error("ScoreUpdater: " + StringUtils.stringifyException(e));
+            return -1;
+        }
     }
-  }
 }

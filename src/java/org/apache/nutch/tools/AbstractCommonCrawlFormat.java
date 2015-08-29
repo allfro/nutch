@@ -17,18 +17,17 @@
 
 package org.apache.nutch.tools;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.text.ParseException;
-
+import com.ibm.icu.text.SimpleDateFormat;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.metadata.Metadata;
 import org.apache.nutch.util.URLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ibm.icu.text.SimpleDateFormat;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.text.ParseException;
 
 /**
  * Abstract class that implements {@see CommonCrawlFormat} interface. 

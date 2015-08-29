@@ -16,10 +16,6 @@
  */
 package org.apache.nutch.scoring;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
@@ -29,6 +25,10 @@ import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.plugin.Pluggable;
 import org.apache.nutch.protocol.Content;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * A contract defining behavior of scoring plugins.

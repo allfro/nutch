@@ -16,15 +16,7 @@
  */
 package org.apache.nutch.scoring.webgraph;
 
-import java.io.IOException;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
+import org.apache.commons.cli.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -35,6 +27,8 @@ import org.apache.hadoop.mapred.MapFileOutputFormat;
 import org.apache.hadoop.mapred.lib.HashPartitioner;
 import org.apache.nutch.util.FSUtils;
 import org.apache.nutch.util.NutchConfiguration;
+
+import java.io.IOException;
 
 /**
  * Reads and prints to system out information for a single node from the NodeDb

@@ -17,30 +17,32 @@
 
 package org.apache.nutch.crawl;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-// Commons Logging imports
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MapFileOutputFormat;
+import org.apache.hadoop.util.StringUtils;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.mapper.CrawlDbFilterMapper;
 import org.apache.nutch.mapper.MergerMapper;
+import org.apache.nutch.util.NutchConfiguration;
+import org.apache.nutch.util.TimingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.util.*;
-import org.apache.hadoop.conf.*;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.TimingUtil;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Random;
+
+// Commons Logging imports
 
 /**
  * This tool merges several CrawlDb-s into one, optionally filtering URLs
@@ -102,6 +104,7 @@ public class CrawlDbMerger extends Configured implements Tool {
                 + Integer.toString(new Random().nextInt(Integer.MAX_VALUE)));
 
         Job job = Job.getInstance(configuration, "crawldb merge " + output);
+        job.setJarByClass(CrawlDbMerger.class);
 
         job.setInputFormatClass(SequenceFileInputFormat.class);
 

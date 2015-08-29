@@ -17,15 +17,15 @@
 
 package org.apache.nutch.tools;
 
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.metadata.Metadata;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * This class provides methods to map crawled data on JSON using Jettinson APIs. 

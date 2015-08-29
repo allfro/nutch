@@ -8,7 +8,6 @@ import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.DeduplicationJob;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * Created by ndouba on 15-08-28.

@@ -17,29 +17,31 @@
 
 package org.apache.nutch.crawl;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.net.*;
-
-// Commons Logging imports
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.fs.*;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.conf.*;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.util.*;
+import org.apache.hadoop.util.StringUtils;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.net.URLFilters;
 import org.apache.nutch.net.URLNormalizers;
-import org.apache.nutch.parse.*;
-import org.apache.nutch.util.HadoopFSUtil;
-import org.apache.nutch.util.LockUtil;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.NutchTool;
-import org.apache.nutch.util.TimingUtil;
+import org.apache.nutch.parse.Outlink;
+import org.apache.nutch.parse.ParseData;
+import org.apache.nutch.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+// Commons Logging imports
 
 /** Maintains an inverted link map, listing incoming links for each url. */
 public class LinkDb extends NutchTool implements Tool,

@@ -16,8 +16,6 @@
  */
 package org.apache.nutch.service.impl;
 
-import java.util.Collection;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.service.ConfManager;
@@ -26,6 +24,8 @@ import org.apache.nutch.service.model.request.JobConfig;
 import org.apache.nutch.service.model.response.JobInfo;
 import org.apache.nutch.service.model.response.JobInfo.State;
 import org.apache.nutch.util.NutchTool;
+
+import java.util.Collection;
 
 public class JobManagerImpl implements JobManager {
 

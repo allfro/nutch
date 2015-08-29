@@ -17,9 +17,9 @@
 
 package org.apache.nutch.net;
 
-import java.net.MalformedURLException;
-
 import org.apache.hadoop.conf.Configurable;
+
+import java.net.MalformedURLException;
 
 /**
  * Interface used to convert URLs to normal form and optionally perform

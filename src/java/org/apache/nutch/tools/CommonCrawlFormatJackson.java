@@ -17,14 +17,13 @@
 
 package org.apache.nutch.tools;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.metadata.Metadata;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * This class provides methods to map crawled data on JSON using Jackson Streaming APIs. 

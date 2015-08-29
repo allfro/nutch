@@ -16,16 +16,15 @@
  */
 package org.apache.nutch.service.resources;
 
-import java.util.Date;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-
 import org.apache.nutch.service.model.response.JobInfo.State;
 import org.apache.nutch.service.model.response.NutchServerInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import java.util.Date;
 
 @Path(value="/admin")
 public class AdminResource extends AbstractResource{

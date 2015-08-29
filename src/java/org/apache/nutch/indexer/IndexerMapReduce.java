@@ -16,12 +16,6 @@
  */
 package org.apache.nutch.indexer;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.hadoop.conf.Configured;
@@ -29,18 +23,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.Mapper;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reducer;
-import org.apache.hadoop.mapred.Reporter;
-import org.apache.hadoop.mapred.SequenceFileInputFormat;
-import org.apache.nutch.crawl.CrawlDatum;
-import org.apache.nutch.crawl.CrawlDb;
-import org.apache.nutch.crawl.Inlinks;
-import org.apache.nutch.crawl.LinkDb;
-import org.apache.nutch.crawl.NutchWritable;
+import org.apache.hadoop.mapred.*;
+import org.apache.nutch.crawl.*;
 import org.apache.nutch.metadata.Metadata;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.net.URLFilters;
@@ -52,6 +36,12 @@ import org.apache.nutch.parse.ParseText;
 import org.apache.nutch.protocol.Content;
 import org.apache.nutch.scoring.ScoringFilterException;
 import org.apache.nutch.scoring.ScoringFilters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class IndexerMapReduce extends Configured implements
     Mapper<Text, Writable, Text, NutchWritable>,

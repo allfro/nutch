@@ -16,12 +16,12 @@
  */
 package org.apache.nutch.util;
 
-import java.util.HashMap;
-import java.util.WeakHashMap;
-
+import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.hadoop.conf.Configuration;
+
+import java.util.HashMap;
+import java.util.WeakHashMap;
 
 public class ObjectCache {
 

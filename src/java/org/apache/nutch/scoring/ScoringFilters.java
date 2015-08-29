@@ -17,10 +17,6 @@
 
 package org.apache.nutch.scoring;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.io.Text;
@@ -31,6 +27,10 @@ import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.plugin.PluginRepository;
 import org.apache.nutch.protocol.Content;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Creates and caches {@link ScoringFilter} implementing plugins.

@@ -17,11 +17,13 @@
 package org.apache.nutch.net.protocols;
 
 // JDK imports
+
+import org.apache.nutch.metadata.HttpHeaders;
+import org.apache.nutch.metadata.Metadata;
+
 import java.net.URL;
 
 // Nutch imports
-import org.apache.nutch.metadata.HttpHeaders;
-import org.apache.nutch.metadata.Metadata;
 
 /**
  * A response interface. Makes all protocols model HTTP.

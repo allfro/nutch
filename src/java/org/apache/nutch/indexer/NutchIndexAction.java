@@ -16,13 +16,11 @@
  */
 package org.apache.nutch.indexer;
 
+import org.apache.hadoop.io.Writable;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
-import org.apache.hadoop.io.Writable;
-
-import org.apache.nutch.indexer.NutchDocument;
 
 /**
  * A {@link NutchIndexAction} is the new unit of indexing holding the document

@@ -17,6 +17,18 @@
 package org.apache.nutch.parse;
 
 // JDK imports
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.nutch.util.NutchConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,23 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
 // Commons Logging imports
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 // Hadoop imports
-import org.apache.hadoop.conf.Configuration;
-
 // Nutch imports
-import org.apache.nutch.util.NutchConfiguration;
 
 /**
  * A reader to load the information stored in the

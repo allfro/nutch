@@ -17,11 +17,6 @@
 
 package org.apache.nutch.crawl;
 
-import java.io.IOException;
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.Mapper;
@@ -29,6 +24,11 @@ import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.nutch.net.URLFilters;
 import org.apache.nutch.net.URLNormalizers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * This class provides a way to separate the URL normalization and filtering

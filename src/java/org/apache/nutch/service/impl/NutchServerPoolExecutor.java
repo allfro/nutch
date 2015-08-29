@@ -16,19 +16,18 @@
  */
 package org.apache.nutch.service.impl;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Queues;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.nutch.service.model.response.JobInfo;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.nutch.service.model.response.JobInfo;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Queues;
 
 
 

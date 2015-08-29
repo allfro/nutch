@@ -16,12 +16,12 @@
  */
 package org.apache.nutch.scoring.webgraph;
 
+import org.apache.hadoop.io.Writable;
+import org.apache.nutch.metadata.Metadata;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
-import org.apache.hadoop.io.Writable;
-import org.apache.nutch.metadata.Metadata;
 
 /**
  * A class which holds the number of inlinks and outlinks for a given url along

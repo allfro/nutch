@@ -16,8 +16,6 @@
  */
 package org.apache.nutch.indexer;
 
-import java.io.IOException;
-
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileOutputFormat;
@@ -25,6 +23,8 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.RecordWriter;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.util.Progressable;
+
+import java.io.IOException;
 
 public class IndexerOutputFormat extends
     FileOutputFormat<Text, NutchIndexAction> {

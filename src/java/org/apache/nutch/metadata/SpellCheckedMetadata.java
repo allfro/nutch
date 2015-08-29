@@ -16,12 +16,12 @@
  */
 package org.apache.nutch.metadata;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * A decorator to Metadata that adds spellchecking capabilities to property

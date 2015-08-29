@@ -17,26 +17,22 @@
 package org.apache.nutch.parse;
 
 // JDK imports
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
-// Commons Logging imports
+import org.apache.hadoop.conf.Configuration;
+import org.apache.nutch.plugin.Extension;
+import org.apache.nutch.plugin.ExtensionPoint;
+import org.apache.nutch.plugin.PluginRepository;
+import org.apache.nutch.plugin.PluginRuntimeException;
+import org.apache.nutch.util.MimeUtil;
+import org.apache.nutch.util.ObjectCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// Hadoop imports
-import org.apache.hadoop.conf.Configuration;
+import java.util.*;
 
+// Commons Logging imports
+// Hadoop imports
 // Nutch imports
-import org.apache.nutch.plugin.Extension;
-import org.apache.nutch.plugin.ExtensionPoint;
-import org.apache.nutch.plugin.PluginRuntimeException;
-import org.apache.nutch.plugin.PluginRepository;
-import org.apache.nutch.util.MimeUtil;
-import org.apache.nutch.util.ObjectCache;
 
 /** Creates and caches {@link Parser} plugins. */
 public final class ParserFactory {

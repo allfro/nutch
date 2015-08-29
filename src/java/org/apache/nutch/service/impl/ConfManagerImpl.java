@@ -16,13 +16,7 @@
  */
 package org.apache.nutch.service.impl;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -31,7 +25,12 @@ import org.apache.nutch.service.model.request.NutchConfig;
 import org.apache.nutch.service.resources.ConfigResource;
 import org.apache.nutch.util.NutchConfiguration;
 
-import com.google.common.collect.Maps;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConfManagerImpl implements ConfManager {
 

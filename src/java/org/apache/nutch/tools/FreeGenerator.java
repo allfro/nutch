@@ -94,6 +94,7 @@ public class FreeGenerator extends Configured implements Tool {
 
         Configuration configuration = getConf();
         Job job = Job.getInstance(configuration);
+        job.setJarByClass(FreeGenerator.class);
         configuration.setBoolean(FILTER_KEY, filter);
         configuration.setBoolean(NORMALIZE_KEY, normalize);
         FileInputFormat.addInputPath(job, new Path(args[0]));

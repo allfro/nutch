@@ -16,13 +16,13 @@
  */
 package org.apache.nutch.segment;
 
-import java.util.Collection;
-
 import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.parse.ParseText;
 import org.apache.nutch.protocol.Content;
+
+import java.util.Collection;
 
 /**
  * Interface used to filter segments during segment merge. It allows filtering

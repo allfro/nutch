@@ -18,10 +18,11 @@
 package org.apache.nutch.net;
 
 // Hadoop imports
+
 import org.apache.hadoop.conf.Configurable;
+import org.apache.nutch.plugin.Pluggable;
 
 // Nutch imports
-import org.apache.nutch.plugin.Pluggable;
 
 /**
  * Interface used to limit which URLs enter Nutch. Used by the injector and the

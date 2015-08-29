@@ -17,10 +17,10 @@
 
 package org.apache.nutch.tools;
 
-import java.io.IOException;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.metadata.Metadata;
+
+import java.io.IOException;
 
 /**
  * Factory class that creates new {@see CommonCrawlFormat} objects (a.k.a. formatter) that map crawled files to CommonCrawl format.   

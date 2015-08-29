@@ -17,10 +17,10 @@
 
 package org.apache.nutch.crawl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.util.ObjectCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Creates and caches a {@link FetchSchedule} implementation. */
 public class FetchScheduleFactory {

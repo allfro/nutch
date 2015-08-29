@@ -17,8 +17,12 @@
 
 package org.apache.nutch.crawl;
 
-import java.io.*;
-import org.apache.hadoop.io.*;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 
 /* An incoming link to a page. */
 public class Inlink implements Writable {

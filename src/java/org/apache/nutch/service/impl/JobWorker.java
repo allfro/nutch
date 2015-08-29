@@ -16,8 +16,6 @@
  */
 package org.apache.nutch.service.impl;
 
-import java.text.MessageFormat;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.service.model.request.JobConfig;
@@ -27,6 +25,8 @@ import org.apache.nutch.service.resources.ConfigResource;
 import org.apache.nutch.util.NutchTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
 
 public class JobWorker implements Runnable{
 

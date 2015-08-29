@@ -16,19 +16,16 @@
  */
 package org.apache.nutch.plugin;
 
+import org.apache.hadoop.conf.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.hadoop.conf.Configuration;
+import java.net.URL;
+import java.util.*;
 
 /**
  * The <code>PluginDescriptor</code> provide access to all meta information of a

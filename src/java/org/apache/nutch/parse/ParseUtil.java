@@ -18,17 +18,16 @@ package org.apache.nutch.parse;
 
 // Commons Logging imports
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.nutch.protocol.Content;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.nutch.protocol.Content;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
  * A Utility class containing methods to simply perform parsing utilities such

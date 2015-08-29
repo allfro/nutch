@@ -17,11 +17,11 @@
 
 package org.apache.nutch.util;
 
+import org.apache.hadoop.conf.Configuration;
+
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.UUID;
-
-import org.apache.hadoop.conf.Configuration;
 
 /**
  * Utility to create Hadoop {@link Configuration}s that include Nutch-specific

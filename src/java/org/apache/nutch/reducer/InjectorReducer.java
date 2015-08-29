@@ -4,12 +4,10 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.nutch.crawl.CrawlDatum;
-import org.apache.nutch.crawl.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 /** Combine multiple new entries for a url. */
 public class InjectorReducer extends
@@ -41,8 +39,7 @@ public class InjectorReducer extends
         boolean oldSet = false;
         boolean injectedSet = false;
 
-        while (context.nextKeyValue()) {
-            CrawlDatum val = context.getCurrentValue();
+        for (CrawlDatum val: values) {
             if (val.getStatus() == CrawlDatum.STATUS_INJECTED) {
                 injected.set(val);
                 injected.setStatus(CrawlDatum.STATUS_DB_UNFETCHED);

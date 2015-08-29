@@ -17,12 +17,14 @@
 
 package org.apache.nutch.util;
 
-import java.net.MalformedURLException;
-import java.net.*;
-import java.util.regex.Pattern;
-
 import org.apache.nutch.util.domain.DomainSuffix;
 import org.apache.nutch.util.domain.DomainSuffixes;
+
+import java.net.IDN;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 /** Utility class for URL analysis */
 public class URLUtil {

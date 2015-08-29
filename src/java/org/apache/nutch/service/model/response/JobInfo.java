@@ -16,10 +16,10 @@
  */
 package org.apache.nutch.service.model.response;
 
-import java.util.Map;
-
 import org.apache.nutch.service.JobManager.JobType;
 import org.apache.nutch.service.model.request.JobConfig;
+
+import java.util.Map;
 
 /**
  * This is the response object containing Job information

@@ -17,15 +17,15 @@
 
 package org.apache.nutch.parse;
 
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+import org.apache.nutch.crawl.MapWritable;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Map.Entry;
-
-import org.apache.nutch.crawl.MapWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 
 /* An outgoing link from a page. */
 public class Outlink implements Writable {

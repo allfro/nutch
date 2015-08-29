@@ -16,15 +16,15 @@
  */
 package org.apache.nutch.fetcher;
 
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
-
 import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.util.URLUtil;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.UnknownHostException;
 
 /**
  * This class described the item to be fetched.

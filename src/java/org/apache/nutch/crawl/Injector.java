@@ -96,6 +96,7 @@ public class Injector extends NutchTool implements Tool {
         boolean dbExists = fs.exists(crawlDbDir);
 
         Job sortJob = Job.getInstance(configuration, "inject " + urlSeedDir);
+        sortJob.setJarByClass(Injector.class);
         FileInputFormat.addInputPath(sortJob, urlSeedDir);
         sortJob.setMapperClass(InjectorMapper.class);
 

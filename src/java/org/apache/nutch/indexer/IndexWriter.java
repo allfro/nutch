@@ -16,12 +16,11 @@
  */
 package org.apache.nutch.indexer;
 
-import java.io.IOException;
-
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.mapred.JobConf;
-import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.plugin.Pluggable;
+
+import java.io.IOException;
 
 public interface IndexWriter extends Pluggable, Configurable {
   /** The name of the extension point. */

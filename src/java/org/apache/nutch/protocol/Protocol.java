@@ -18,14 +18,14 @@
 package org.apache.nutch.protocol;
 
 // Hadoop imports
+
+import crawlercommons.robots.BaseRobotRules;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.io.Text;
-
-// Nutch imports
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.plugin.Pluggable;
 
-import crawlercommons.robots.BaseRobotRules;
+// Nutch imports
 
 /** A retriever of url content. Implemented by protocol extensions. */
 public interface Protocol extends Pluggable, Configurable {

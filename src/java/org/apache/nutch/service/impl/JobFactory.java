@@ -17,22 +17,17 @@
 
 package org.apache.nutch.service.impl;
 
-import java.util.Map;
-
+import com.google.common.collect.Maps;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.util.ReflectionUtils;
-import org.apache.nutch.service.JobManager.JobType;
-import org.apache.nutch.crawl.CrawlDb;
-import org.apache.nutch.crawl.DeduplicationJob;
-import org.apache.nutch.crawl.Generator;
-import org.apache.nutch.crawl.Injector;
-import org.apache.nutch.crawl.LinkDb;
+import org.apache.nutch.crawl.*;
 import org.apache.nutch.fetcher.Fetcher;
 import org.apache.nutch.indexer.IndexingJob;
 import org.apache.nutch.parse.ParseSegment;
+import org.apache.nutch.service.JobManager.JobType;
 import org.apache.nutch.util.NutchTool;
 
-import com.google.common.collect.Maps;
+import java.util.Map;
 
 public class JobFactory {
   private static Map<JobType, Class<? extends NutchTool>> typeToClass;

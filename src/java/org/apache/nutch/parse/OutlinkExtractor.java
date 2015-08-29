@@ -17,21 +17,14 @@
 
 package org.apache.nutch.parse;
 
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.hadoop.conf.Configuration;
+import org.apache.oro.text.regex.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.oro.text.regex.MatchResult;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.PatternCompiler;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.PatternMatcherInput;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Extractor to extract {@link org.apache.nutch.parse.Outlink}s / URLs from

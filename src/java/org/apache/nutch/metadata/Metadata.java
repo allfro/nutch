@@ -16,6 +16,9 @@
  */
 package org.apache.nutch.metadata;
 
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -23,9 +26,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 
 /**
  * A multi-valued metadata container.

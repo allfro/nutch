@@ -17,20 +17,21 @@
 
 package org.apache.nutch.partitioner;
 
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.net.UnknownHostException;
-
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.nutch.crawl.Generator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapreduce.*;
 import org.apache.nutch.net.URLNormalizers;
 import org.apache.nutch.util.URLUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 
 /**
  * Partition urls by host, domain name or IP depending on the value of the

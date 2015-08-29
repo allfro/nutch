@@ -17,10 +17,10 @@
 
 package org.apache.nutch.tools;
 
-import java.io.IOException;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.metadata.Metadata;
+
+import java.io.IOException;
 
 /**
  * This class provides methods to map crawled data on JSON using a {@see StringBuilder} object. 

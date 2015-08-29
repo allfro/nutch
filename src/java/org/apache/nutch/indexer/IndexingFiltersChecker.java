@@ -17,11 +17,6 @@
 
 package org.apache.nutch.indexer;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
@@ -30,11 +25,11 @@ import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.crawl.SignatureFactory;
+import org.apache.nutch.mapper.ParseSegmentMapper;
 import org.apache.nutch.metadata.Metadata;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseResult;
-import org.apache.nutch.parse.ParseSegment;
 import org.apache.nutch.parse.ParseUtil;
 import org.apache.nutch.protocol.Content;
 import org.apache.nutch.protocol.Protocol;
@@ -46,6 +41,11 @@ import org.apache.nutch.util.StringUtil;
 import org.apache.nutch.util.URLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Reads and parses a URL and run the indexers on it. Displays the fields
@@ -145,7 +145,7 @@ public class IndexingFiltersChecker extends Configured implements Tool {
     datum.getMetaData().put(new Text(Metadata.CONTENT_TYPE),
         new Text(contentType));
 
-    if (ParseSegment.isTruncated(content)) {
+    if (ParseSegmentMapper.isTruncated(content)) {
       LOG.warn("Content is truncated, parse may fail!");
     }
 

@@ -17,9 +17,9 @@
 
 package org.apache.nutch.service.model.request;
 
-import java.util.Map;
-
 import org.apache.nutch.service.JobManager.JobType;
+
+import java.util.Map;
 
 
 public class JobConfig {

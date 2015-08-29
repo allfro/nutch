@@ -17,9 +17,9 @@
 
 package org.apache.nutch.parse;
 
-import java.util.concurrent.Callable;
-
 import org.apache.nutch.protocol.Content;
+
+import java.util.concurrent.Callable;
 
 class ParseCallable implements Callable<ParseResult> {
   private Parser p;

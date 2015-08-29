@@ -5,7 +5,6 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.nutch.crawl.CrawlDatum;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 /** Combine multiple new entries for a url. */
 public class StatusUpdateReducer extends

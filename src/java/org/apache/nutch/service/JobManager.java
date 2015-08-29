@@ -17,10 +17,11 @@
 
 package org.apache.nutch.service;
 
-import java.util.Collection;
 import org.apache.nutch.service.model.request.JobConfig;
 import org.apache.nutch.service.model.response.JobInfo;
 import org.apache.nutch.service.model.response.JobInfo.State;
+
+import java.util.Collection;
 
 public interface JobManager {
 

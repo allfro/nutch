@@ -16,38 +16,27 @@
  */
 package org.apache.nutch.indexer;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-
-import org.apache.nutch.segment.SegmentChecker;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapred.Counters.Counter;
 import org.apache.hadoop.mapred.FileOutputFormat;
 import org.apache.hadoop.mapred.JobClient;
 import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.Counters.Counter;
 import org.apache.hadoop.mapred.RunningJob;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.apache.nutch.util.HadoopFSUtil;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.NutchTool;
-import org.apache.nutch.util.TimingUtil;
+import org.apache.nutch.segment.SegmentChecker;
+import org.apache.nutch.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Generic indexer which relies on the plugins implementing IndexWriter

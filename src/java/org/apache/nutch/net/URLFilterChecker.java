@@ -17,12 +17,10 @@
 
 package org.apache.nutch.net;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.plugin.Extension;
 import org.apache.nutch.plugin.ExtensionPoint;
 import org.apache.nutch.plugin.PluginRepository;
-
-import org.apache.hadoop.conf.Configuration;
-
 import org.apache.nutch.util.NutchConfiguration;
 
 import java.io.BufferedReader;

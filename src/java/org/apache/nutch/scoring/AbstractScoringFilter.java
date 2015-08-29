@@ -1,9 +1,5 @@
 package org.apache.nutch.scoring;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
@@ -12,8 +8,10 @@ import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.protocol.Content;
-import org.apache.nutch.scoring.ScoringFilter;
-import org.apache.nutch.scoring.ScoringFilterException;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map.Entry;
 
 public abstract class AbstractScoringFilter implements ScoringFilter {
 

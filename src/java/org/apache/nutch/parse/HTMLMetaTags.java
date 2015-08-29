@@ -17,11 +17,11 @@
 
 package org.apache.nutch.parse;
 
+import org.apache.nutch.metadata.Metadata;
+
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Properties;
-
-import org.apache.nutch.metadata.Metadata;
 
 /**
  * This class holds the information about HTML "meta" tags extracted from a

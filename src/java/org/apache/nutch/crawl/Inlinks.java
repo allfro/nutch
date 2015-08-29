@@ -17,11 +17,14 @@
 
 package org.apache.nutch.crawl;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import org.apache.hadoop.io.Writable;
 
-import org.apache.hadoop.io.*;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /** A list of {@link Inlink}s. */
 public class Inlinks implements Writable {

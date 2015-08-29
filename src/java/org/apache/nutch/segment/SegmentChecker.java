@@ -16,17 +16,17 @@
  */
 package org.apache.nutch.segment;
 
-import java.io.IOException;
-
-import org.apache.nutch.crawl.CrawlDatum;
-import org.apache.nutch.parse.ParseText;
-import org.apache.nutch.parse.ParseData;
-import org.apache.nutch.util.HadoopFSUtil;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.nutch.crawl.CrawlDatum;
+import org.apache.nutch.parse.ParseData;
+import org.apache.nutch.parse.ParseText;
+import org.apache.nutch.util.HadoopFSUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * Checks whether a segment is valid, or has a certain status (generated,

@@ -16,36 +16,25 @@
  */
 package org.apache.nutch.tools.arc;
 
-import java.io.IOException;
-
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileSplit;
-import org.apache.hadoop.mapred.InputSplit;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.RecordReader;
-import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.hadoop.mapreduce.RecordReader;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+
+import java.io.IOException;
 
 /**
  * A input format the reads arc files.
  */
 public class ArcInputFormat extends FileInputFormat<Text, BytesWritable> {
 
-  /**
-   * Returns the <code>RecordReader</code> for reading the arc file.
-   * 
-   * @param split
-   *          The InputSplit of the arc file to process.
-   * @param job
-   *          The job configuration.
-   * @param reporter
-   *          The progress reporter.
-   */
-  public RecordReader<Text, BytesWritable> getRecordReader(InputSplit split,
-      JobConf job, Reporter reporter) throws IOException {
-    reporter.setStatus(split.toString());
-    return new ArcRecordReader(job, (FileSplit) split);
-  }
-
+    @Override
+    public RecordReader<Text, BytesWritable> createRecordReader(InputSplit split, TaskAttemptContext context)
+            throws IOException, InterruptedException {
+        context.setStatus(split.toString());
+        return new ArcRecordReader(context.getConfiguration(), (FileSplit) split);
+    }
 }

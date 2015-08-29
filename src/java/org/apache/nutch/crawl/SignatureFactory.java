@@ -18,12 +18,13 @@
 package org.apache.nutch.crawl;
 
 // Commons Logging imports
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.nutch.util.ObjectCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // Hadoop imports
-import org.apache.hadoop.conf.Configuration;
-import org.apache.nutch.util.ObjectCache;
 
 /**
  * Factory class, which instantiates a Signature implementation according to the

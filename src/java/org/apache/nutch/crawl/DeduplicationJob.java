@@ -21,7 +21,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.CounterGroup;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
@@ -34,7 +33,6 @@ import org.apache.nutch.mapper.DBFilterMapper;
 import org.apache.nutch.reducer.DedupReducer;
 import org.apache.nutch.reducer.StatusUpdateReducer;
 import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
 import org.apache.nutch.util.NutchTool;
 import org.apache.nutch.util.TimingUtil;
 import org.slf4j.Logger;
@@ -81,6 +79,7 @@ public class DeduplicationJob extends NutchTool implements Tool {
                 + Integer.toString(new Random().nextInt(Integer.MAX_VALUE)));
 
         Job job = Job.getInstance(configuration, "Deduplication on " + crawldb);
+        job.setJarByClass(DeduplicationJob.class);
 
         FileInputFormat.addInputPath(job, new Path(crawldb, CrawlDb.CURRENT_NAME));
         job.setInputFormatClass(SequenceFileInputFormat.class);

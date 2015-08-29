@@ -16,41 +16,33 @@
  */
 package org.apache.nutch.scoring.webgraph;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Iterator;
-import java.util.Random;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.MapFileOutputFormat;
-import org.apache.nutch.mapper.ScoreUpdaterMapper;
-import org.apache.nutch.reducer.ScoreUpdaterReducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.cli.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.ObjectWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MapFileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.CrawlDb;
+import org.apache.nutch.mapper.ScoreUpdaterMapper;
+import org.apache.nutch.reducer.ScoreUpdaterReducer;
 import org.apache.nutch.util.NutchConfiguration;
 import org.apache.nutch.util.TimingUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Random;
 
 /**
  * Updates the score from the WebGraph node database into the crawl database.
@@ -91,6 +83,7 @@ public class ScoreUpdater extends Configured implements Tool {
 
         // run the updater job outputting to the temp crawl database
         Job updaterJob = Job.getInstance(configuration);
+        updaterJob.setJarByClass(ScoreUpdater.class);
         updaterJob.setJobName("Update CrawlDb from WebGraph");
         FileInputFormat.addInputPath(updaterJob, crawlDbCurrent);
         FileInputFormat.addInputPath(updaterJob, nodeDb);

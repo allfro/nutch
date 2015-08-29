@@ -16,16 +16,10 @@
  */
 package org.apache.nutch.service.resources;
 
-import static javax.ws.rs.core.Response.status;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collection;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.nutch.service.model.request.SeedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -34,11 +28,12 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collection;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.nutch.service.model.request.SeedList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static javax.ws.rs.core.Response.status;
 
 
 /**

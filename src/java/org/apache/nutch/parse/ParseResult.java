@@ -17,14 +17,14 @@
 
 package org.apache.nutch.parse;
 
+import org.apache.hadoop.io.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.hadoop.io.Text;
 
 /**
  * A utility class that stores result of a parse. Internally a ParseResult

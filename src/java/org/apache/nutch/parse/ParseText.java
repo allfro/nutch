@@ -17,13 +17,17 @@
 
 package org.apache.nutch.parse;
 
-import java.io.*;
+import org.apache.commons.cli.Options;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.hadoop.fs.*;
-import org.apache.hadoop.conf.*;
-import org.apache.commons.cli.Options;
 import org.apache.nutch.util.NutchConfiguration;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 
 /* The text conversion of page's content, stored using gzip compression.
  * @see Parse#getText()

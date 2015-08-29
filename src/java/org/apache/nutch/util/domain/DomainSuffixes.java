@@ -17,12 +17,12 @@
 
 package org.apache.nutch.util.domain;
 
-import java.io.InputStream;
-import java.util.HashMap;
-
+import org.apache.hadoop.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.hadoop.util.StringUtils;
+
+import java.io.InputStream;
+import java.util.HashMap;
 
 /**
  * Storage class for <code>DomainSuffix</code> objects Note: this class is

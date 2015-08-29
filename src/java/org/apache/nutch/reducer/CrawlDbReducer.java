@@ -17,40 +17,39 @@
 
 package org.apache.nutch.reducer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.io.IOException;
-
-// Logging imports
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.nutch.crawl.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.hadoop.io.*;
 import org.apache.hadoop.util.PriorityQueue;
+import org.apache.nutch.crawl.*;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.scoring.ScoringFilterException;
 import org.apache.nutch.scoring.ScoringFilters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+
+// Logging imports
 
 /** Merge new page entries with existing entries. */
-public class CrawlDbReducer extends
+public class  CrawlDbReducer extends
         Reducer<Text, CrawlDatum, Text, CrawlDatum> {
 
     public static final Logger LOG = LoggerFactory
             .getLogger(CrawlDbReducer.class);
 
     private int retryMax;
-    private CrawlDatum result = new CrawlDatum();
     private InlinkPriorityQueue linked = null;
     private ScoringFilters scfilters = null;
     private boolean additionsAllowed;
     private int maxInterval;
     private FetchSchedule schedule;
-    private Counter crawlStatus;
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
@@ -62,17 +61,15 @@ public class CrawlDbReducer extends
         schedule = FetchScheduleFactory.getFetchSchedule(configuration);
         int maxLinks = configuration.getInt("db.update.max.inlinks", 10000);
         linked = new InlinkPriorityQueue(maxLinks);
-        crawlStatus = context.getCounter(
-                "CrawlDB status",
-                CrawlDatum.getStatusName(result.getStatus())
-        );
     }
 
     @Override
-    protected void reduce(Text key, Iterable<CrawlDatum> values, Context context) throws IOException, InterruptedException {
+    protected void reduce(Text key, Iterable<CrawlDatum> values, Context context)
+            throws IOException, InterruptedException {
 
         CrawlDatum fetch = new CrawlDatum();
         CrawlDatum old = new CrawlDatum();
+        CrawlDatum result = new CrawlDatum();
 
         boolean fetchSet = false;
         boolean oldSet = false;
@@ -81,9 +78,10 @@ public class CrawlDbReducer extends
         linked.clear();
         org.apache.nutch.crawl.MapWritable metaFromParse = null;
 
-        while (context.nextKeyValue()) {
-            CrawlDatum datum = context.getCurrentValue();
-            if (!multiple && context.nextKeyValue())
+        Iterator<CrawlDatum> iterator = values.iterator();
+        while (iterator.hasNext()) {
+            CrawlDatum datum = iterator.next();
+            if (!multiple && iterator.hasNext())
                 multiple = true;
             if (CrawlDatum.hasDbStatus(datum)) {
                 if (!oldSet) {
@@ -162,7 +160,10 @@ public class CrawlDbReducer extends
         if (!fetchSet) {
             if (oldSet) {// at this point at least "old" should be present
                 context.write(key, old);
-                crawlStatus.increment(1);
+                context.getCounter(
+                        "CrawlDB status",
+                        CrawlDatum.getStatusName(result.getStatus())
+                ).increment(1);
             } else {
                 LOG.warn("Missing fetch and old value, signature={}", signature);
             }
@@ -321,7 +322,10 @@ public class CrawlDbReducer extends
         // remove generation time, if any
         result.getMetaData().remove(Nutch.WRITABLE_GENERATE_TIME_KEY);
         context.write(key, result);
-        crawlStatus.increment(1);
+        context.getCounter(
+                "CrawlDB status",
+                CrawlDatum.getStatusName(result.getStatus())
+        ).increment(1);
     }
 
 }

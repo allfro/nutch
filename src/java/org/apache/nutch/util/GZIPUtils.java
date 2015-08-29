@@ -17,15 +17,16 @@
 
 package org.apache.nutch.util;
 
-import java.io.ByteArrayOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 // Slf4j Logging imports
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A collection of utility methods for working on GZIPed data.

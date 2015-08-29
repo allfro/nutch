@@ -16,22 +16,18 @@
  */
 package org.apache.nutch.plugin;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.nutch.util.NutchConfiguration;
+import org.apache.nutch.util.ObjectCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.WeakHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.ObjectCache;
 
 /**
  * The plugin repositority is a registry of all plugins.

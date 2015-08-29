@@ -17,10 +17,10 @@
 
 package org.apache.nutch.util;
 
-import java.io.IOException;
-
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+
+import java.io.IOException;
 
 /**
  * Utility methods for handling application-level locking.

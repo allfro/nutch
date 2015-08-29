@@ -17,32 +17,31 @@
 
 package org.apache.nutch.crawl;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-// Commons Logging imports
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MapFileOutputFormat;
+import org.apache.hadoop.util.StringUtils;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.mapper.CrawlDbFilterMapper;
 import org.apache.nutch.reducer.CrawlDbReducer;
+import org.apache.nutch.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.fs.*;
-import org.apache.hadoop.conf.*;
-import org.apache.hadoop.util.*;
-import org.apache.nutch.util.HadoopFSUtil;
-import org.apache.nutch.util.LockUtil;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchTool;
-import org.apache.nutch.util.TimingUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+// Commons Logging imports
 
 /**
  * This class takes the output of the fetcher and updates the crawldb
@@ -84,6 +83,7 @@ public class CrawlDb extends NutchTool implements Tool {
         long start = System.currentTimeMillis();
 
         Job job = CrawlDb.createJob(configuration, crawlDb);
+        job.setJarByClass(CrawlDb.class);
         configuration.setBoolean(CRAWLDB_ADDITIONS_ALLOWED, additionsAllowed);
         configuration.setBoolean(CrawlDbFilterMapper.URL_FILTERING, filter);
         configuration.setBoolean(CrawlDbFilterMapper.URL_NORMALIZING, normalize);

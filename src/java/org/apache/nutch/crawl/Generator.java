@@ -202,6 +202,7 @@ public class Generator extends NutchTool implements Tool {
 
         // map to inverted subset due for fetch, sort by score
         Job job = Job.getInstance(configuration, "generate: select from " + dbDir);
+        job.setJarByClass(Generator.class);
 
         if (numLists == -1) { // for politeness make
             numLists = configuration.getInt(MRJobConfig.NUM_MAPS, 1); // a partition per fetch task
@@ -278,6 +279,7 @@ public class Generator extends NutchTool implements Tool {
                     + "/generate-temp-" + java.util.UUID.randomUUID().toString());
 
             job = Job.getInstance(configuration, "generate: updatedb " + dbDir);
+            job.setJarByClass(Generator.class);
             configuration.setLong(Nutch.GENERATE_TIME_KEY, generateTime);
             for (Path segmpaths : generatedSegments) {
                 Path subGenDir = new Path(segmpaths, CrawlDatum.GENERATE_DIR_NAME);
@@ -327,6 +329,7 @@ public class Generator extends NutchTool implements Tool {
         LOG.info("Generator: segment: {}", segment);
 
         Job job = Job.getInstance(configuration, "generate: partition " + segment);
+        job.setJarByClass(Generator.class);
 
         configuration.setInt("partition.url.seed", new Random().nextInt());
 

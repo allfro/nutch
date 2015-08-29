@@ -16,12 +16,8 @@
  */
 package org.apache.nutch.indexer;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapred.JobConf;
-import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.plugin.Extension;
 import org.apache.nutch.plugin.ExtensionPoint;
 import org.apache.nutch.plugin.PluginRepository;
@@ -29,6 +25,9 @@ import org.apache.nutch.plugin.PluginRuntimeException;
 import org.apache.nutch.util.ObjectCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /** Creates and caches {@link IndexWriter} implementing plugins. */
 public class IndexWriters {

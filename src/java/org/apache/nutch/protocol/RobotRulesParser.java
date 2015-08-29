@@ -18,11 +18,22 @@
 package org.apache.nutch.protocol;
 
 // JDK imports
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.LineNumberReader;
+
+import crawlercommons.robots.BaseRobotRules;
+import crawlercommons.robots.SimpleRobotRules;
+import crawlercommons.robots.SimpleRobotRules.RobotRulesMode;
+import crawlercommons.robots.SimpleRobotRulesParser;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.util.StringUtils;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+import org.apache.nutch.util.NutchConfiguration;
+import org.apache.nutch.util.SuffixStringMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
@@ -31,22 +42,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 // Commons Logging imports
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 // Nutch imports
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.util.StringUtils;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.SuffixStringMatcher;
-
-import crawlercommons.robots.BaseRobotRules;
-import crawlercommons.robots.SimpleRobotRules;
-import crawlercommons.robots.SimpleRobotRules.RobotRulesMode;
-import crawlercommons.robots.SimpleRobotRulesParser;
 
 /**
  * This class uses crawler-commons for handling the parsing of

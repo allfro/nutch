@@ -17,6 +17,9 @@
 
 package org.apache.nutch.indexer;
 
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -24,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.hadoop.io.*;
 
 /**
  * This class represents a multi-valued field with a weight. Values are

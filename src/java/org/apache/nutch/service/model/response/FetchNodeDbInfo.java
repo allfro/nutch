@@ -16,10 +16,10 @@
  */
 package org.apache.nutch.service.model.response;
 
+import org.apache.nutch.parse.Outlink;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.nutch.parse.Outlink;
 
 public class FetchNodeDbInfo {
   

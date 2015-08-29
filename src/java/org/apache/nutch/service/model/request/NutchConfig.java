@@ -16,9 +16,8 @@
  */
 package org.apache.nutch.service.model.request;
 
-import java.util.Map;
-
 import java.util.Collections;
+import java.util.Map;
 
 public class NutchConfig {
   private String configId;

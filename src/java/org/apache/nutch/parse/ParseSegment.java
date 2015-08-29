@@ -17,284 +17,146 @@
 
 package org.apache.nutch.parse;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+import org.apache.nutch.mapper.ParseSegmentMapper;
+import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.protocol.Content;
+import org.apache.nutch.reducer.ParseSegmentReducer;
+import org.apache.nutch.scoring.ScoringFilters;
+import org.apache.nutch.segment.SegmentChecker;
+import org.apache.nutch.util.NutchConfiguration;
+import org.apache.nutch.util.NutchTool;
+import org.apache.nutch.util.TimingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.nutch.crawl.CrawlDatum;
-import org.apache.nutch.crawl.SignatureFactory;
-import org.apache.nutch.segment.SegmentChecker;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.util.*;
-import org.apache.hadoop.conf.*;
-import org.apache.nutch.metadata.Metadata;
-import org.apache.nutch.metadata.Nutch;
-import org.apache.nutch.net.protocols.Response;
-import org.apache.nutch.protocol.*;
-import org.apache.nutch.scoring.ScoringFilterException;
-import org.apache.nutch.scoring.ScoringFilters;
-import org.apache.nutch.util.*;
-import org.apache.hadoop.fs.Path;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /* Parse content in a segment. */
-public class ParseSegment extends NutchTool implements Tool,
-    Mapper<WritableComparable<?>, Content, Text, ParseImpl>,
-    Reducer<Text, Writable, Text, Writable> {
+public class ParseSegment extends NutchTool implements Tool {
 
-  public static final Logger LOG = LoggerFactory.getLogger(ParseSegment.class);
+    public static final Logger LOG = LoggerFactory.getLogger(ParseSegment.class);
 
-  public static final String SKIP_TRUNCATED = "parser.skip.truncated";
+    public static final String SKIP_TRUNCATED = "parser.skip.truncated";
 
-  private ScoringFilters scfilters;
+    private ScoringFilters scfilters;
 
-  private ParseUtil parseUtil;
+    private ParseUtil parseUtil;
 
-  private boolean skipTruncated;
+    private boolean skipTruncated;
 
-  public ParseSegment() {
-    this(null);
-  }
-
-  public ParseSegment(Configuration conf) {
-    super(conf);
-  }
-
-  public void configure(JobConf job) {
-    setConf(job);
-    this.scfilters = new ScoringFilters(job);
-    skipTruncated = job.getBoolean(SKIP_TRUNCATED, true);
-  }
-
-  public void close() {
-  }
-
-  private Text newKey = new Text();
-
-  public void map(WritableComparable<?> key, Content content,
-      OutputCollector<Text, ParseImpl> output, Reporter reporter)
-      throws IOException {
-    // convert on the fly from old UTF8 keys
-    if (key instanceof Text) {
-      newKey.set(key.toString());
-      key = newKey;
+    public ParseSegment() {
+        this(null);
     }
 
-    int status = Integer.parseInt(content.getMetadata().get(
-        Nutch.FETCH_STATUS_KEY));
-    if (status != CrawlDatum.STATUS_FETCH_SUCCESS) {
-      // content not fetched successfully, skip document
-      LOG.debug("Skipping " + key + " as content is not fetched successfully");
-      return;
+    public ParseSegment(Configuration conf) {
+        super(conf);
     }
 
-    if (skipTruncated && isTruncated(content)) {
-      return;
-    }
 
-    ParseResult parseResult = null;
-    try {
-      if (parseUtil == null)
-        parseUtil = new ParseUtil(getConf());
-      parseResult = parseUtil.parse(content);
-    } catch (Exception e) {
-      LOG.warn("Error parsing: " + key + ": "
-          + StringUtils.stringifyException(e));
-      return;
-    }
 
-    for (Entry<Text, Parse> entry : parseResult) {
-      Text url = entry.getKey();
-      Parse parse = entry.getValue();
-      ParseStatus parseStatus = parse.getData().getStatus();
-
-      long start = System.currentTimeMillis();
-
-      reporter.incrCounter("ParserStatus",
-          ParseStatus.majorCodes[parseStatus.getMajorCode()], 1);
-
-      if (!parseStatus.isSuccess()) {
-        LOG.warn("Error parsing: " + key + ": " + parseStatus);
-        parse = parseStatus.getEmptyParse(getConf());
-      }
-
-      // pass segment name to parse data
-      parse.getData().getContentMeta()
-          .set(Nutch.SEGMENT_NAME_KEY, getConf().get(Nutch.SEGMENT_NAME_KEY));
-
-      // compute the new signature
-      byte[] signature = SignatureFactory.getSignature(getConf()).calculate(
-          content, parse);
-      parse.getData().getContentMeta()
-          .set(Nutch.SIGNATURE_KEY, StringUtil.toHexString(signature));
-
-      try {
-        scfilters.passScoreAfterParsing(url, content, parse);
-      } catch (ScoringFilterException e) {
-        if (LOG.isWarnEnabled()) {
-          LOG.warn("Error passing score: " + url + ": " + e.getMessage());
+    public void parse(Path segment) throws IOException, ClassNotFoundException, InterruptedException {
+        Configuration configuration = getConf();
+        if (SegmentChecker.isParsed(segment, FileSystem.get(configuration))) {
+            LOG.warn("Segment: {} already parsed!! Skipped parsing this segment!!", segment); // NUTCH-1854
+            return;
         }
-      }
 
-      long end = System.currentTimeMillis();
-      LOG.info("Parsed (" + Long.toString(end - start) + "ms):" + url);
-
-      output.collect(
-          url,
-          new ParseImpl(new ParseText(parse.getText()), parse.getData(), parse
-              .isCanonical()));
-    }
-  }
-
-  /**
-   * Checks if the page's content is truncated.
-   * 
-   * @param content
-   * @return If the page is truncated <code>true</code>. When it is not, or when
-   *         it could be determined, <code>false</code>.
-   */
-  public static boolean isTruncated(Content content) {
-    byte[] contentBytes = content.getContent();
-    if (contentBytes == null)
-      return false;
-    Metadata metadata = content.getMetadata();
-    if (metadata == null)
-      return false;
-
-    String lengthStr = metadata.get(Response.CONTENT_LENGTH);
-    if (lengthStr != null)
-      lengthStr = lengthStr.trim();
-    if (StringUtil.isEmpty(lengthStr)) {
-      return false;
-    }
-    int inHeaderSize;
-    String url = content.getUrl();
-    try {
-      inHeaderSize = Integer.parseInt(lengthStr);
-    } catch (NumberFormatException e) {
-      LOG.warn("Wrong contentlength format for " + url, e);
-      return false;
-    }
-    int actualSize = contentBytes.length;
-    if (inHeaderSize > actualSize) {
-      LOG.info(url + " skipped. Content of size " + inHeaderSize
-          + " was truncated to " + actualSize);
-      return true;
-    }
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(url + " actualSize=" + actualSize + " inHeaderSize="
-          + inHeaderSize);
-    }
-    return false;
-  }
-
-  public void reduce(Text key, Iterator<Writable> values,
-      OutputCollector<Text, Writable> output, Reporter reporter)
-      throws IOException {
-    output.collect(key, values.next()); // collect first value
-  }
-
-  public void parse(Path segment) throws IOException {
-     if (SegmentChecker.isParsed(segment, FileSystem.get(getConf()))) {
-	  LOG.warn("Segment: " + segment
-	  + " already parsed!! Skipped parsing this segment!!"); // NUTCH-1854
-          return;
-      }
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    long start = System.currentTimeMillis();
-    if (LOG.isInfoEnabled()) {
-      LOG.info("ParseSegment: starting at " + sdf.format(start));
-      LOG.info("ParseSegment: segment: " + segment);
-    }
-
-    JobConf job = new NutchJob(getConf());
-    job.setJobName("parse " + segment);
-
-    FileInputFormat.addInputPath(job, new Path(segment, Content.DIR_NAME));
-    job.set(Nutch.SEGMENT_NAME_KEY, segment.getName());
-    job.setInputFormat(SequenceFileInputFormat.class);
-    job.setMapperClass(ParseSegment.class);
-    job.setReducerClass(ParseSegment.class);
-
-    FileOutputFormat.setOutputPath(job, segment);
-    job.setOutputFormat(ParseOutputFormat.class);
-    job.setOutputKeyClass(Text.class);
-    job.setOutputValueClass(ParseImpl.class);
-
-    JobClient.runJob(job);
-    long end = System.currentTimeMillis();
-    LOG.info("ParseSegment: finished at " + sdf.format(end) + ", elapsed: "
-        + TimingUtil.elapsedTime(start, end));
-  }
-
-  public static void main(String[] args) throws Exception {
-    int res = ToolRunner.run(NutchConfiguration.create(), new ParseSegment(),
-        args);
-    System.exit(res);
-  }
-
-  public int run(String[] args) throws Exception {
-    Path segment;
-
-    String usage = "Usage: ParseSegment segment [-noFilter] [-noNormalize]";
-
-    if (args.length == 0) {
-      System.err.println(usage);
-      System.exit(-1);
-    }
-
-    if (args.length > 1) {
-      for (int i = 1; i < args.length; i++) {
-        String param = args[i];
-
-        if ("-nofilter".equalsIgnoreCase(param)) {
-          getConf().setBoolean("parse.filter.urls", false);
-        } else if ("-nonormalize".equalsIgnoreCase(param)) {
-          getConf().setBoolean("parse.normalize.urls", false);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long start = System.currentTimeMillis();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("ParseSegment: starting at {}", sdf.format(start));
+            LOG.info("ParseSegment: segment: {}", segment);
         }
-      }
+
+        Job job = Job.getInstance(configuration, "parse " + segment);
+
+        FileInputFormat.addInputPath(job, new Path(segment, Content.DIR_NAME));
+        configuration.set(Nutch.SEGMENT_NAME_KEY, segment.getName());
+        job.setInputFormatClass(SequenceFileInputFormat.class);
+        job.setMapperClass(ParseSegmentMapper.class);
+        job.setReducerClass(ParseSegmentReducer.class);
+
+        FileOutputFormat.setOutputPath(job, segment);
+        job.setOutputFormatClass(ParseOutputFormat.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(ParseImpl.class);
+
+        job.waitForCompletion(true);
+
+        long end = System.currentTimeMillis();
+        LOG.info("ParseSegment: finished at {} elapsed: {}", sdf.format(end), TimingUtil.elapsedTime(start, end));
     }
 
-    segment = new Path(args[0]);
-    parse(segment);
-    return 0;
-  }
-
-  /*
-   * Used for Nutch REST service
-   */
-  public Map<String, Object> run(Map<String, String> args, String crawlId) throws Exception {
-
-    Map<String, Object> results = new HashMap<String, Object>();
-    String RESULT = "result";
-    if (args.containsKey("nofilter")) {
-      getConf().setBoolean("parse.filter.urls", false);
-    }
-    if (args.containsKey("nonormalize")) {
-      getConf().setBoolean("parse.normalize.urls", false);
+    public static void main(String[] args) throws Exception {
+        int res = ToolRunner.run(NutchConfiguration.create(), new ParseSegment(),
+                args);
+        System.exit(res);
     }
 
-    String segment_dir = crawlId+"/segments";
-    File segmentsDir = new File(segment_dir);
-    File[] segmentsList = segmentsDir.listFiles();  
-    Arrays.sort(segmentsList, new Comparator<File>(){
-      @Override
-      public int compare(File f1, File f2) {
-        if(f1.lastModified()>f2.lastModified())
-          return -1;
-        else
-          return 0;
-      }      
-    });
-    
-    Path segment = new Path(segmentsList[0].getPath());
-    parse(segment);
-    results.put(RESULT, Integer.toString(0));
-    return results;
-  }
+    public int run(String[] args) throws Exception {
+        Path segment;
+
+        String usage = "Usage: ParseSegment segment [-noFilter] [-noNormalize]";
+
+        if (args.length == 0) {
+            System.err.println(usage);
+            System.exit(-1);
+        }
+
+        if (args.length > 1) {
+            Configuration configuration = getConf();
+            for (int i = 1; i < args.length; i++) {
+                String param = args[i];
+                if ("-nofilter".equalsIgnoreCase(param)) {
+                    configuration.setBoolean("parse.filter.urls", false);
+                } else if ("-nonormalize".equalsIgnoreCase(param)) {
+                    configuration.setBoolean("parse.normalize.urls", false);
+                }
+            }
+        }
+
+        segment = new Path(args[0]);
+        parse(segment);
+        return 0;
+    }
+
+    /*
+     * Used for Nutch REST service
+     */
+    public Map<String, Object> run(Map<String, String> args, String crawlId) throws Exception {
+
+        Map<String, Object> results = new HashMap<String, Object>();
+        String RESULT = "result";
+        if (args.containsKey("nofilter")) {
+            getConf().setBoolean("parse.filter.urls", false);
+        }
+        if (args.containsKey("nonormalize")) {
+            getConf().setBoolean("parse.normalize.urls", false);
+        }
+
+        String segment_dir = crawlId+"/segments";
+        File segmentsDir = new File(segment_dir);
+        File[] segmentsList = segmentsDir.listFiles();
+        Arrays.sort(segmentsList, (f1, f2) -> (f1.lastModified()>f2.lastModified())?-1:0);
+
+        Path segment = new Path(segmentsList[0].getPath());
+        parse(segment);
+        results.put(RESULT, Integer.toString(0));
+        return results;
+    }
 }

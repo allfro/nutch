@@ -16,12 +16,12 @@
  */
 package org.apache.nutch.scoring.webgraph;
 
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 
 /**
  * A class for holding link information including the url, anchor text, a score,

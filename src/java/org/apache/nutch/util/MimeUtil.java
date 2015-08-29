@@ -18,14 +18,9 @@
 package org.apache.nutch.util;
 
 // JDK imports
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
-// Hadoop imports
 import org.apache.hadoop.conf.Configuration;
-
-// Tika imports
+import org.apache.nutch.protocol.ProtocolOutput;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -33,13 +28,17 @@ import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.mime.MimeTypesFactory;
-
-// Slf4j logging imports
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+// Hadoop imports
+// Tika imports
+// Slf4j logging imports
 // imported for Javadoc
-import org.apache.nutch.protocol.ProtocolOutput;
 
 /**
  * @author mattmann

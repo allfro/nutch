@@ -16,6 +16,12 @@
  */
 package org.apache.nutch.indexer;
 
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.VersionMismatchException;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableUtils;
+import org.apache.nutch.metadata.Metadata;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -24,12 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.VersionMismatchException;
-import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableUtils;
-import org.apache.nutch.metadata.Metadata;
 
 /** A {@link NutchDocument} is the unit of indexing. */
 public class NutchDocument implements Writable,

@@ -18,21 +18,9 @@
 package org.apache.nutch.service;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
-import org.apache.commons.cli.CommandLine;
+import com.google.common.collect.Queues;
+import org.apache.commons.cli.*;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -45,15 +33,15 @@ import org.apache.nutch.service.impl.JobManagerImpl;
 import org.apache.nutch.service.impl.NutchServerPoolExecutor;
 import org.apache.nutch.service.model.response.JobInfo;
 import org.apache.nutch.service.model.response.JobInfo.State;
-import org.apache.nutch.service.resources.AdminResource;
-import org.apache.nutch.service.resources.ConfigResource;
-import org.apache.nutch.service.resources.DbResource;
-import org.apache.nutch.service.resources.JobResource;
-import org.apache.nutch.service.resources.SeedResource;
+import org.apache.nutch.service.resources.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Queues;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class NutchServer {
 

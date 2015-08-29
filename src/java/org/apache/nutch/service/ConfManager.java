@@ -17,11 +17,11 @@
 
 package org.apache.nutch.service;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.service.model.request.NutchConfig;
+
+import java.util.Map;
+import java.util.Set;
 
 public interface ConfManager {
 

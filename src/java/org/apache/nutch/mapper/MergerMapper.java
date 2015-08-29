@@ -9,7 +9,6 @@ import org.apache.nutch.crawl.FetchScheduleFactory;
 import org.apache.nutch.crawl.MapWritable;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
 /**

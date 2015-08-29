@@ -16,10 +16,10 @@
  */
 package org.apache.nutch.util;
 
-import java.util.Stack;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.util.Stack;
 
 /**
  * <p>

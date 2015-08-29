@@ -17,10 +17,9 @@
 
 package org.apache.nutch.parse;
 
-import org.apache.nutch.protocol.Content;
-import org.apache.nutch.plugin.PluginRepository;
 import org.apache.hadoop.conf.Configuration;
-
+import org.apache.nutch.plugin.PluginRepository;
+import org.apache.nutch.protocol.Content;
 import org.w3c.dom.DocumentFragment;
 
 /** Creates and caches {@link HtmlParseFilter} implementing plugins. */

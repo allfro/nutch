@@ -16,89 +16,87 @@
  */
 package org.apache.nutch.fetcher;
 
-import java.io.IOException;
-
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.RecordReader;
+import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * This class feeds the queues with input items, and re-fills them as items
  * are consumed by FetcherThread-s.
  */
 public class QueueFeeder extends Thread {
-  
-  private static final Logger LOG = LoggerFactory.getLogger(QueueFeeder.class);
 
-  
-  private RecordReader<Text, CrawlDatum> reader;
-  private FetchItemQueues queues;
-  private int size;
-  private long timelimit = -1;
+    private static final Logger LOG = LoggerFactory.getLogger(QueueFeeder.class);
 
-  public QueueFeeder(RecordReader<Text, CrawlDatum> reader,
-      FetchItemQueues queues, int size) {
-    this.reader = reader;
-    this.queues = queues;
-    this.size = size;
-    this.setDaemon(true);
-    this.setName("QueueFeeder");
-  }
 
-  public void setTimeLimit(long tl) {
-    timelimit = tl;
-  }
+    private Mapper.Context context;
+    private FetchItemQueues queues;
+    private int size;
+    private long timelimit = -1;
 
-  public void run() {
-    boolean hasMore = true;
-    int cnt = 0;
-    int timelimitcount = 0;
-    while (hasMore) {
-      if (System.currentTimeMillis() >= timelimit && timelimit != -1) {
-        // enough .. lets' simply
-        // read all the entries from the input without processing them
-        try {
-          Text url = new Text();
-          CrawlDatum datum = new CrawlDatum();
-          hasMore = reader.next(url, datum);
-          timelimitcount++;
-        } catch (IOException e) {
-          LOG.error("QueueFeeder error reading input, record " + cnt, e);
-          return;
-        }
-        continue;
-      }
-      int feed = size - queues.getTotalSize();
-      if (feed <= 0) {
-        // queues are full - spin-wait until they have some free space
-        try {
-          Thread.sleep(1000);
-        } catch (Exception e) {
-        }
-        ;
-        continue;
-      } else {
-        LOG.debug("-feeding " + feed + " input urls ...");
-        while (feed > 0 && hasMore) {
-          try {
-            Text url = new Text();
-            CrawlDatum datum = new CrawlDatum();
-            hasMore = reader.next(url, datum);
-            if (hasMore) {
-              queues.addFetchItem(url, datum);
-              cnt++;
-              feed--;
-            }
-          } catch (IOException e) {
-            LOG.error("QueueFeeder error reading input, record " + cnt, e);
-            return;
-          }
-        }
-      }
+    public QueueFeeder(Mapper.Context context,
+                       FetchItemQueues queues, int size) {
+        this.context = context;
+        this.queues = queues;
+        this.size = size;
+        this.setDaemon(true);
+        this.setName("QueueFeeder");
     }
-    LOG.info("QueueFeeder finished: total " + cnt
-        + " records + hit by time limit :" + timelimitcount);
-  }
+
+    public void setTimeLimit(long tl) {
+        timelimit = tl;
+    }
+
+    public void run() {
+        boolean hasMore = true;
+        int cnt = 0;
+        int timelimitcount = 0;
+        while (hasMore) {
+            if (System.currentTimeMillis() >= timelimit && timelimit != -1) {
+                // enough .. lets' simply
+                // read all the entries from the input without processing them
+                try {
+                    hasMore = context.nextKeyValue(); // advance record pointer without processing
+//                    Text url = (Text) context.getCurrentKey();
+//                    CrawlDatum datum = (CrawlDatum) context.getCurrentValue();
+                    timelimitcount++;
+                } catch (IOException | InterruptedException e) {
+                    LOG.error("QueueFeeder error reading input, record {}", cnt, e);
+                    return;
+                }
+                continue;
+            }
+            int feed = size - queues.getTotalSize();
+            if (feed <= 0) {
+                // queues are full - spin-wait until they have some free space
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception ignored) {
+                }
+            } else {
+                LOG.debug("-feeding {} input urls ...", feed);
+                while (feed > 0 && hasMore) {
+                    try {
+                        hasMore = context.nextKeyValue();
+                        Text url = new Text((Text) context.getCurrentKey());
+                        CrawlDatum datum = new CrawlDatum();
+                        ((CrawlDatum) context.getCurrentValue()).putAllMetaData(datum);
+                        if (hasMore) {
+                            queues.addFetchItem(url, datum);
+                            cnt++;
+                            feed--;
+                        }
+                    } catch (IOException | InterruptedException e) {
+                        LOG.error("QueueFeeder error reading input, record {}", cnt, e);
+                        return;
+                    }
+                }
+            }
+        }
+        LOG.info("QueueFeeder finished: total {} records + hit by time limit: {}", cnt, timelimitcount);
+    }
 }

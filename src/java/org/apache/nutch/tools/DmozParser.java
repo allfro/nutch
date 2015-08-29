@@ -17,23 +17,25 @@
 
 package org.apache.nutch.tools;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-
-import javax.xml.parsers.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.io.MD5Hash;
+import org.apache.nutch.util.NutchConfiguration;
 import org.apache.xerces.util.XMLChar;
-
-// Slf4j Logging imports
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
 
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.fs.*;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.nutch.util.NutchConfiguration;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.*;
+import java.util.Random;
+import java.util.Vector;
+import java.util.regex.Pattern;
+
+// Slf4j Logging imports
 
 /** Utility that converts DMOZ RDF into a flat file of URLs to be injected. */
 public class DmozParser {

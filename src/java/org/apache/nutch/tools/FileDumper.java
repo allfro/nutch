@@ -103,8 +103,13 @@ import java.util.Map;
  */
 public class FileDumper extends Configured {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FileDumper.class
-            .getName());
+    private static final Logger LOG = LoggerFactory.getLogger(FileDumper.class);
+
+    private static boolean local;
+
+    public static FileSystem getFileSystem(Configuration conf) throws IOException {
+        return (local)?FileSystem.getLocal(conf):FileSystem.get(conf);
+    }
 
     /**
      * Dumps the reverse engineered raw content from the provided segment
@@ -129,30 +134,27 @@ public class FileDumper extends Configured {
         if (mimeTypes == null)
             LOG.info("Accepting all mimetypes.");
         // total file counts
-        Map<String, Integer> typeCounts = new HashMap<String, Integer>();
+        Map<String, Integer> typeCounts = new HashMap<>();
         // filtered file counts
-        Map<String, Integer> filteredCounts = new HashMap<String, Integer>();
-        Configuration conf = getConf();
-        FileSystem fs = FileSystem.get(conf);
-        int fileCount = 0;
+        Map<String, Integer> filteredCounts = new HashMap<>();
+        Configuration configuration = getConf();
+        FileSystem fs = getFileSystem(configuration);
 
-        System.out.println(segmentRootDir + " " + fs);
         RemoteIterator<LocatedFileStatus> segmentDirs = fs.listFiles(segmentRootDir, true);
 
         if (!segmentDirs.hasNext()) {
-            System.err.println("No segment directories found in ["
-                    + segmentRootDir + "]");
+            System.err.println(String.format("No segment directories found in [%s]", segmentRootDir));
             return;
         }
 
         while (segmentDirs.hasNext()) {
             Path segmentPath = segmentDirs.next().getPath();
-            if (!segmentPath.getName().equals("data"))
+            if (!segmentPath.toString().matches(".*?/content/part-.*?/data"))
                 continue;
-            LOG.info("Processing segment: [" + segmentPath + "]");
+            LOG.info("Processing segment: [{}]", segmentPath);
             DataOutputStream doutputStream = null;
             try {
-                SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(segmentPath));
+                SequenceFile.Reader reader = new SequenceFile.Reader(configuration, SequenceFile.Reader.file(segmentPath));
 
                 Writable key = (Writable) reader.getKeyClass().newInstance();
                 Content content;
@@ -167,7 +169,6 @@ public class FileDumper extends Configured {
                         extension = "html";
                     }
 
-                    String filename = baseName + "." + extension;
                     ByteArrayInputStream bas = null;
                     Boolean filter = false;
                     try {
@@ -183,7 +184,7 @@ public class FileDumper extends Configured {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        LOG.warn("Tika is unable to detect type for: [" + url + "]");
+                        LOG.warn("Tika is unable to detect type for: [{}]", url);
                     } finally {
                         if (bas != null) {
                             try {
@@ -195,20 +196,18 @@ public class FileDumper extends Configured {
 
                     if (filter) {
                         if (!mimeTypeStats) {
-                            String md5Ofurl = DumpFileUtil.getUrlMD5(url);
-                            Path fullDir = new Path(outputDir, md5Ofurl);
+                            String urlMD5 = DumpFileUtil.getUrlMD5(url);
+                            Path fullDir = DumpFileUtil.createTwoLevelsDirectory(fs, outputDir, urlMD5, true);
 
-                            if (fs.mkdirs(fullDir)) {
-                                Path outputFile = new Path(fullDir, DumpFileUtil.createFileName(md5Ofurl, baseName, extension));
+                            if (fullDir != null) {
+                                Path outputFile = new Path(fullDir, DumpFileUtil.createFileName(urlMD5, baseName, extension));
 
                                 if (!fs.exists(outputFile)) {
-                                    LOG.info("Writing: [" + outputFile + "]");
+                                    LOG.info("Writing: [{}]", outputFile);
                                     FSDataOutputStream output = fs.create(outputFile);
                                     IOUtils.write(content.getContent(), output.getWrappedStream());
-                                    fileCount++;
                                 } else {
-                                    LOG.info("Skipping writing: [" + outputFile
-                                            + "]: file already exists");
+                                    LOG.info("Skipping writing: [{}]: file already exists", outputFile);
                                 }
                             }
                         }
@@ -227,12 +226,12 @@ public class FileDumper extends Configured {
             }
         }
         fs.close();
-        LOG.info("Dumper File Stats: "
-                + DumpFileUtil.displayFileTypes(typeCounts, filteredCounts));
+        LOG.info("Dumper File Stats: {}",
+                DumpFileUtil.displayFileTypes(typeCounts, filteredCounts));
 
         if (mimeTypeStats) {
-            System.out.println("Dumper File Stats: "
-                    + DumpFileUtil.displayFileTypes(typeCounts, filteredCounts));
+            System.out.println(String.format("Dumper File Stats: %s",
+                    DumpFileUtil.displayFileTypes(typeCounts, filteredCounts)));
         }
     }
 
@@ -266,11 +265,17 @@ public class FileDumper extends Configured {
                         "an optional list of mimetypes to dump, excluding all others. Defaults to all.")
                 .create("mimetype");
         @SuppressWarnings("static-access")
-        Option mimeStat = OptionBuilder
+        Option mimeStatOpt = OptionBuilder
                 .withArgName("mimeStats")
                 .withDescription(
                         "only display mimetype stats for the segment(s) instead of dumping file.")
                 .create("mimeStats");
+
+        @SuppressWarnings("static-access")
+        Option runLocalOpt = OptionBuilder
+                .withArgName("runLocal")
+                .withDescription("run this against the local file system segments")
+                .create("runLocal");
 
         // create the options
         Options options = new Options();
@@ -278,7 +283,8 @@ public class FileDumper extends Configured {
         options.addOption(outputOpt);
         options.addOption(segOpt);
         options.addOption(mimeOpt);
-        options.addOption(mimeStat);
+        options.addOption(mimeStatOpt);
+        options.addOption(runLocalOpt);
 
         CommandLineParser parser = new GnuParser();
         try {
@@ -289,9 +295,11 @@ public class FileDumper extends Configured {
                 formatter.printHelp("FileDumper", options, true);
                 return;
             }
+            local = line.hasOption("runLocal");
 
             Configuration conf = NutchConfiguration.create();
-            FileSystem fs = FileSystem.get(conf);
+
+            FileSystem fs = getFileSystem(conf);
             Path outputDir = new Path(line.getOptionValue("outputDir"));
             Path segmentRootDir = new Path(line.getOptionValue("segment"));
             String[] mimeTypes = line.getOptionValues("mimetype");
@@ -300,12 +308,10 @@ public class FileDumper extends Configured {
                 shouldDisplayStats = true;
 
             if (!fs.exists(outputDir)) {
-                LOG.warn("Output directory: [" + outputDir
-                        + "]: does not exist, creating it.");
+                LOG.warn("Output directory: [{}]: does not exist, creating it.", outputDir);
                 if (!shouldDisplayStats) {
                     if (!fs.mkdirs(outputDir))
-                        throw new Exception("Unable to create: ["
-                                + outputDir + "]");
+                        throw new Exception("Unable to create: [" + outputDir + "]");
                 }
             }
 
@@ -313,9 +319,8 @@ public class FileDumper extends Configured {
             dumper.setConf(conf);
             dumper.dump(outputDir, segmentRootDir, mimeTypes, shouldDisplayStats);
         } catch (Exception e) {
-            LOG.error("FileDumper: " + StringUtils.stringifyException(e));
+            LOG.error("FileDumper: {}", StringUtils.stringifyException(e));
             e.printStackTrace();
-            return;
         }
     }
 

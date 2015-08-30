@@ -563,9 +563,14 @@ public class FetcherThread extends Thread {
         }
 
         try {
-            context.write(key, new NutchWritable(datum));
-            if (content != null && storingContent)
-                context.write(key, new NutchWritable(content));
+            synchronized(context) {
+                context.write(key, new NutchWritable(datum));
+            }
+            if (content != null && storingContent) {
+                synchronized (context) {
+                    context.write(key, new NutchWritable(content));
+                }
+            }
             if (parseResult != null) {
                 for (Entry<Text, Parse> entry : parseResult) {
                     Text url = entry.getKey();
@@ -685,8 +690,10 @@ public class FetcherThread extends Thread {
                     parseData.setOutlinks(outlinkList.toArray(new Outlink[outlinkList
                             .size()]));
 
-                    context.write(url, new NutchWritable(new ParseImpl(new ParseText(
-                            parse.getText()), parseData, parse.isCanonical())));
+                    synchronized (context) {
+                        context.write(url, new NutchWritable(new ParseImpl(new ParseText(
+                                parse.getText()), parseData, parse.isCanonical())));
+                    }
                 }
             }
         } catch (IOException e) {

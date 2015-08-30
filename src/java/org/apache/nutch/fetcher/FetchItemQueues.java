@@ -58,18 +58,15 @@ public class FetchItemQueues {
         if (!queueMode.equals(QUEUE_MODE_IP)
                 && !queueMode.equals(QUEUE_MODE_DOMAIN)
                 && !queueMode.equals(QUEUE_MODE_HOST)) {
-            LOG.error("Unknown partition mode : " + queueMode
-                    + " - forcing to byHost");
+            LOG.error("Unknown partition mode: {} - forcing to byHost", queueMode);
             queueMode = QUEUE_MODE_HOST;
         }
-        LOG.info("Using queue mode : " + queueMode);
+        LOG.info("Using queue mode : {}", queueMode);
 
         this.crawlDelay = (long) (conf.getFloat("fetcher.server.delay", 1.0f) * 1000);
-        this.minCrawlDelay = (long) (conf.getFloat("fetcher.server.min.delay",
-                0.0f) * 1000);
+        this.minCrawlDelay = (long) (conf.getFloat("fetcher.server.min.delay", 0.0f) * 1000);
         this.timelimit = conf.getLong("fetcher.timelimit", -1);
-        this.maxExceptionsPerQueue = conf.getInt(
-                "fetcher.max.exceptions.per.queue", -1);
+        this.maxExceptionsPerQueue = conf.getInt("fetcher.max.exceptions.per.queue", -1);
     }
 
     public int getTotalSize() {
@@ -99,7 +96,7 @@ public class FetchItemQueues {
     public void finishFetchItem(FetchItem it, boolean asap) {
         FetchItemQueue fiq = queues.get(it.queueID);
         if (fiq == null) {
-            LOG.warn("Attempting to finish item from unknown queue: " + it);
+            LOG.warn("Attempting to finish item from unknown queue: {}", it);
             return;
         }
         fiq.finishFetchItem(it, asap);
@@ -159,7 +156,7 @@ public class FetchItemQueues {
             FetchItemQueue fiq = queues.get(id);
             if (fiq.getQueueSize() == 0)
                 continue;
-            LOG.info("* queue: " + id + " >> dropping! ");
+            LOG.info("* queue: {} >> dropping! ", id);
             int deleted = fiq.emptyQueue();
             for (int i = 0; i < deleted; i++) {
                 totalSize.decrementAndGet();
@@ -189,8 +186,8 @@ public class FetchItemQueues {
         if (maxExceptionsPerQueue != -1 && excCount >= maxExceptionsPerQueue) {
             // too many exceptions for items in this queue - purge it
             int deleted = fiq.emptyQueue();
-            LOG.info("* queue: " + queueid + " >> removed " + deleted
-                    + " URLs from queue because " + excCount + " exceptions occurred");
+            LOG.info("* queue: {} >> removed {} URLs from queue because {} exceptions occurred",
+                    queueid, deleted, excCount);
             for (int i = 0; i < deleted; i++) {
                 totalSize.decrementAndGet();
             }
@@ -204,7 +201,7 @@ public class FetchItemQueues {
             FetchItemQueue fiq = queues.get(id);
             if (fiq.getQueueSize() == 0)
                 continue;
-            LOG.info("* queue: " + id);
+            LOG.info("* queue: {}", id);
             fiq.dump();
         }
     }

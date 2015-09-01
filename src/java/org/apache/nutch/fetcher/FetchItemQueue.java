@@ -84,8 +84,6 @@ public class FetchItemQueue {
         if (it == null)
             return;
         queue.add(it);
-        System.out.println(this.hashCode() + "FOO:" + it.url);
-        dump();
     }
 
     public void addInProgressFetchItem(FetchItem it) {

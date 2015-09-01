@@ -25,8 +25,8 @@ public class InjectorReducer extends
         scoreInjected = configuration.getFloat("db.score.injected", 1.0f);
         overwrite = configuration.getBoolean("db.injector.overwrite", false);
         update = configuration.getBoolean("db.injector.update", false);
-        LOG.info("Injector: overwrite: " + overwrite);
-        LOG.info("Injector: update: " + update);
+        LOG.info("Injector: overwrite: {}", overwrite);
+        LOG.info("Injector: update: {}", update);
     }
 
     @Override
@@ -53,11 +53,7 @@ public class InjectorReducer extends
         CrawlDatum res;
 
         // Old default behaviour
-        if (injectedSet && !oldSet) {
-            res = injected;
-        } else {
-            res = old;
-        }
+        res = (injectedSet && !oldSet)?injected:old;
 
         if (injectedSet && oldSet) {
             context.getCounter("injector", "urls_merged").increment(1);

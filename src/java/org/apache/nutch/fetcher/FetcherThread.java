@@ -75,8 +75,6 @@ public class FetcherThread extends Thread {
     private int redirectCount;
     private boolean ignoreExternalLinks;
 
-    // Used by fetcher.follow.outlinks.depth in parse
-    private int maxOutlinksPerPage;
     private final int maxOutlinks;
     private final int interval;
     private int maxOutlinkDepth;
@@ -157,7 +155,7 @@ public class FetcherThread extends Thread {
         this.maxRedirect = configuration.getInt("http.redirect.max", 3);
         this.ignoreExternalLinks = configuration.getBoolean("db.ignore.external.links", false);
 
-        maxOutlinksPerPage = configuration.getInt("db.max.outlinks.per.page", 100);
+        int maxOutlinksPerPage = configuration.getInt("db.max.outlinks.per.page", 100);
         maxOutlinks = (maxOutlinksPerPage < 0) ? Integer.MAX_VALUE
                 : maxOutlinksPerPage;
         interval = configuration.getInt("db.fetch.interval.default", 2592000);
@@ -484,7 +482,7 @@ public class FetcherThread extends Thread {
         }
         fit = FetchItem.create(redirUrl, newDatum, queueMode);
         if (fit != null) {
-            FetchItemQueue fiq = ((FetchItemQueues) fetchQueues).getFetchItemQueue(fit.queueID);
+            FetchItemQueue fiq = fetchQueues.getFetchItemQueue(fit.queueID);
             fiq.addInProgressFetchItem(fit);
         } else {
             // stop redirecting

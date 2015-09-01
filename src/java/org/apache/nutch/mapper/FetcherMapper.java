@@ -11,6 +11,7 @@ import org.apache.nutch.fetcher.FetcherThread;
 import org.apache.nutch.fetcher.QueueFeeder;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.protocol.Protocol;
+import org.apache.nutch.util.SSLUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +64,13 @@ public class FetcherMapper extends Mapper<Text, CrawlDatum, Text, NutchWritable>
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
+        // Crawl all the things! We don't care about SSL certificate validation for a web crawler.
+        SSLUtilities.trustAll();
+
         this.configuration = context.getConfiguration();
         threadCount = configuration.getInt("fetcher.threads.fetch", 10);
         if (LOG.isInfoEnabled()) {
-            LOG.info("Fetcher: threads: " + threadCount);
+            LOG.info("Fetcher: threads: {}", threadCount);
         }
 
         int timeoutDivisor = configuration.getInt("fetcher.threads.timeout.divisor", 2);
@@ -119,6 +123,7 @@ public class FetcherMapper extends Mapper<Text, CrawlDatum, Text, NutchWritable>
         this.storingContent = configuration.getBoolean("fetcher.store.content", true);;
         this.parsing = configuration.getBoolean("fetcher.parse", true);;
     }
+
 
     @Override
     public void run(Context context) throws IOException, InterruptedException {

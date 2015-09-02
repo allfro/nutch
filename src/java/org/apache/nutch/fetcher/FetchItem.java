@@ -31,88 +31,87 @@ import java.net.UnknownHostException;
  */
 public class FetchItem {
 
-  private static final Logger LOG = LoggerFactory.getLogger(FetchItem.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FetchItem.class);
 
-  int outlinkDepth = 0;
-  String queueID;
-  Text url;
-  URL u;
-  CrawlDatum datum;
-
-  public FetchItem(Text url, URL u, CrawlDatum datum, String queueID) {
-    this(url, u, datum, queueID, 0);
-  }
-
-  public FetchItem(Text url, URL u, CrawlDatum datum, String queueID,
-      int outlinkDepth) {
-    this.url = url;
-    this.u = u;
-    this.datum = datum;
-    this.queueID = queueID;
-    this.outlinkDepth = outlinkDepth;
-  }
-
-  /**
-   * Create an item. Queue id will be created based on <code>queueMode</code>
-   * argument, either as a protocol + hostname pair, protocol + IP address
-   * pair or protocol+domain pair.
-   */
-  public static FetchItem create(Text url, CrawlDatum datum, String queueMode) {
-    return create(url, datum, queueMode, 0);
-  }
-
-  public static FetchItem create(Text url, CrawlDatum datum,
-      String queueMode, int outlinkDepth) {
+    int outlinkDepth = 0;
     String queueID;
-    URL u = null;
-    try {
-      u = new URL(url.toString());
-    } catch (Exception e) {
-      LOG.warn("Cannot parse url: " + url, e);
-      return null;
+    Text url;
+    URL u;
+    CrawlDatum datum;
+
+    public FetchItem(Text url, URL u, CrawlDatum datum, String queueID) {
+        this(url, u, datum, queueID, 0);
     }
-    final String proto = u.getProtocol().toLowerCase();
-    String key;
-    if (FetchItemQueues.QUEUE_MODE_IP.equalsIgnoreCase(queueMode)) {
-      try {
-        final InetAddress addr = InetAddress.getByName(u.getHost());
-        key = addr.getHostAddress();
-      } catch (final UnknownHostException e) {
-        // unable to resolve it, so don't fall back to host name
-        LOG.warn("Unable to resolve: " + u.getHost() + ", skipping.");
-        return null;
-      }
-    } else if (FetchItemQueues.QUEUE_MODE_DOMAIN.equalsIgnoreCase(queueMode)) {
-      key = URLUtil.getDomainName(u);
-      if (key == null) {
-        LOG.warn("Unknown domain for url: " + url
-            + ", using URL string as key");
-        key = u.toExternalForm();
-      }
-    } else {
-      key = u.getHost();
-      if (key == null) {
-        LOG.warn("Unknown host for url: " + url + ", using URL string as key");
-        key = u.toExternalForm();
-      }
+
+    public FetchItem(Text url, URL u, CrawlDatum datum, String queueID,
+                     int outlinkDepth) {
+        this.url = url;
+        this.u = u;
+        this.datum = datum;
+        this.queueID = queueID;
+        this.outlinkDepth = outlinkDepth;
     }
-    queueID = proto + "://" + key.toLowerCase();
-    return new FetchItem(url, u, datum, queueID, outlinkDepth);
-  }
 
-  public CrawlDatum getDatum() {
-    return datum;
-  }
+    /**
+     * Create an item. Queue id will be created based on <code>queueMode</code>
+     * argument, either as a protocol + hostname pair, protocol + IP address
+     * pair or protocol+domain pair.
+     */
+    public static FetchItem create(Text url, CrawlDatum datum, String queueMode) {
+        return create(url, datum, queueMode, 0);
+    }
 
-  public String getQueueID() {
-    return queueID;
-  }
+    public static FetchItem create(Text url, CrawlDatum datum,
+                                   String queueMode, int outlinkDepth) {
+        String queueID;
+        URL u;
+        try {
+            u = new URL(url.toString());
+        } catch (Exception e) {
+            LOG.warn("Cannot parse url: {}", url, e);
+            return null;
+        }
+        final String proto = u.getProtocol().toLowerCase();
+        String key;
+        if (FetchItemQueues.QUEUE_MODE_IP.equalsIgnoreCase(queueMode)) {
+            try {
+                final InetAddress addr = InetAddress.getByName(u.getHost());
+                key = addr.getHostAddress();
+            } catch (final UnknownHostException e) {
+                // unable to resolve it, so don't fall back to host name
+                LOG.warn("Unable to resolve: {}, skipping.", u.getHost());
+                return null;
+            }
+        } else if (FetchItemQueues.QUEUE_MODE_DOMAIN.equalsIgnoreCase(queueMode)) {
+            key = URLUtil.getDomainName(u);
+            if (key == null) {
+                LOG.warn("Unknown domain for url: {}, using URL string as key", url);
+                key = u.toExternalForm();
+            }
+        } else {
+            key = u.getHost();
+            if (key == null) {
+                LOG.warn("Unknown host for url: {}, using URL string as key", url);
+                key = u.toExternalForm();
+            }
+        }
+        queueID = proto + "://" + key.toLowerCase();
+        return new FetchItem(url, u, datum, queueID, outlinkDepth);
+    }
 
-  public Text getUrl() {
-    return url;
-  }
+    public CrawlDatum getDatum() {
+        return datum;
+    }
 
-  public URL getURL2() {
-    return u;
-  }
+    public String getQueueID() {
+        return queueID;
+    }
+
+    public Text getUrl() {
+        return url;
+    }
+
+    public URL getURL2() {
+        return u;
+    }
 }

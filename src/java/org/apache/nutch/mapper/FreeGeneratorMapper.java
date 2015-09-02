@@ -16,9 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-/**
- * Created by ndouba on 15-08-29.
- */
 public class FreeGeneratorMapper extends
         Mapper<WritableComparable<?>, Text, Text, SelectorEntryWritable> {
     private static final Logger LOG = LoggerFactory.getLogger(FreeGeneratorMapper.class);

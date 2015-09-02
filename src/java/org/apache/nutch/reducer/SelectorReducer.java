@@ -21,9 +21,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class SelectorReducer extends
         Reducer<FloatWritable, SelectorEntryWritable, FloatWritable, SelectorEntryWritable> {
 

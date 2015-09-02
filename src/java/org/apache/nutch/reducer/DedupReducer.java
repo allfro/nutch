@@ -9,9 +9,6 @@ import org.apache.nutch.crawl.DeduplicationJob;
 
 import java.io.IOException;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class DedupReducer extends
         Reducer<BytesWritable, CrawlDatum, Text, CrawlDatum> {
 

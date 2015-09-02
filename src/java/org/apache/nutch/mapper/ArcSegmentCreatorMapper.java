@@ -24,9 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * Created by ndouba on 8/29/15.
- */
 public class ArcSegmentCreatorMapper extends Mapper<Text, BytesWritable, Text, NutchWritable> {
     public static final Logger LOG = LoggerFactory
             .getLogger(ArcSegmentCreatorMapper.class);

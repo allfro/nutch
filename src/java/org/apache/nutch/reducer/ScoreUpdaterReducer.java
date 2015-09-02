@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class ScoreUpdaterReducer extends Reducer<Text, ObjectWritable, Text, CrawlDatum>  {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScoreUpdaterReducer.class);

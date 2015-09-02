@@ -11,9 +11,6 @@ import org.apache.nutch.crawl.MapWritable;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class MergerMapper extends Reducer<Text, CrawlDatum, Text, CrawlDatum> {
     private MapWritable meta;
     private CrawlDatum res = new CrawlDatum();

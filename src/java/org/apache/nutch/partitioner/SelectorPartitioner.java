@@ -7,9 +7,6 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.nutch.io.SelectorEntryWritable;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class SelectorPartitioner extends Partitioner<FloatWritable, Writable> implements Configurable {
 
     private final URLPartitioner partitioner = new URLPartitioner();

@@ -7,9 +7,6 @@ import org.apache.nutch.io.SelectorEntryWritable;
 
 import java.io.IOException;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class SelectorInverseMapper extends
         Mapper<FloatWritable, SelectorEntryWritable, Text, SelectorEntryWritable> {
     @Override

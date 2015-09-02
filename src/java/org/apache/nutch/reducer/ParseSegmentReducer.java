@@ -8,9 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-/**
- * Created by ndouba on 8/29/15.
- */
 public class ParseSegmentReducer extends Reducer<Text, Writable, Text, Writable> {
 
     public static final Logger LOG = LoggerFactory.getLogger(ParseSegmentReducer.class);

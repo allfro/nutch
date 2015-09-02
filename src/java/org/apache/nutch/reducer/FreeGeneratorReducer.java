@@ -8,9 +8,6 @@ import org.apache.nutch.io.SelectorEntryWritable;
 import java.io.IOException;
 import java.util.HashMap;
 
-/**
- * Created by ndouba on 15-08-29.
- */
 public class FreeGeneratorReducer extends
         Reducer<Text, SelectorEntryWritable, Text, CrawlDatum> {
 

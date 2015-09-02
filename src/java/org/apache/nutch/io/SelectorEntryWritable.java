@@ -9,9 +9,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class SelectorEntryWritable implements Writable {
   public Text url;
   public CrawlDatum datum;

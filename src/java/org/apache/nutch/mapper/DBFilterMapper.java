@@ -8,9 +8,6 @@ import org.apache.nutch.crawl.DeduplicationJob;
 
 import java.io.IOException;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class DBFilterMapper extends
         Mapper<Text, CrawlDatum, BytesWritable, CrawlDatum> {
 

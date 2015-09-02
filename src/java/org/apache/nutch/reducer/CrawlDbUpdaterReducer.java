@@ -8,9 +8,6 @@ import org.apache.nutch.metadata.Nutch;
 
 import java.io.IOException;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class CrawlDbUpdaterReducer extends
         Reducer<Text, CrawlDatum, Text, CrawlDatum> {
 

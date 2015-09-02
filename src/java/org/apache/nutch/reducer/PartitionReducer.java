@@ -7,9 +7,6 @@ import org.apache.nutch.io.SelectorEntryWritable;
 
 import java.io.IOException;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class PartitionReducer extends
         Reducer<Text, SelectorEntryWritable, Text, CrawlDatum> {
     @Override

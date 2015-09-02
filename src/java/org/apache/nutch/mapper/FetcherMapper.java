@@ -20,9 +20,6 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Created by ndouba on 8/29/15.
- */
 public class FetcherMapper extends Mapper<Text, CrawlDatum, Text, NutchWritable> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FetcherMapper.class);
@@ -120,7 +117,7 @@ public class FetcherMapper extends Mapper<Text, CrawlDatum, Text, NutchWritable>
         maxThreadsPerQueue = configuration.getInt("fetcher.threads.per.queue", 1);
 
         this.segmentName = configuration.get(Nutch.SEGMENT_NAME_KEY);
-        this.storingContent = configuration.getBoolean("fetcher.store.content", true);;
+        this.storingContent = configuration.getBoolean("fetcher.store.content", true);
         this.parsing = configuration.getBoolean("fetcher.parse", true);;
     }
 

@@ -21,9 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * Created by ndouba on 8/29/15.
- */
 public class ParseSegmentMapper extends Mapper<WritableComparable<?>, Content, Text, ParseImpl> {
 
 

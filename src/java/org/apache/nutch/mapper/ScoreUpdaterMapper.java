@@ -7,9 +7,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
 
-/**
- * Created by ndouba on 15-08-28.
- */
 public class ScoreUpdaterMapper extends Mapper<Text, Writable, Text, ObjectWritable> {
 
     @Override

@@ -20,7 +20,7 @@ import crawlercommons.robots.BaseRobotRules;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
-import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.MapContext;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.NutchWritable;
@@ -59,7 +59,7 @@ public class FetcherThread extends Thread {
 
     private static final Logger LOG = LoggerFactory.getLogger(FetcherThread.class);
     private final Counter robotsDenied;
-    private final Mapper.Context context;
+    private final MapContext<Text, CrawlDatum, Text, NutchWritable> context;
 
     private Configuration configuration;
     private URLFilters urlFilters;
@@ -117,7 +117,7 @@ public class FetcherThread extends Thread {
     private Counter outlinksFollowing;
     private Counter outlinksDetected;
 
-    public FetcherThread(Mapper.Context context, AtomicInteger activeThreads, FetchItemQueues fetchQueues,
+    public FetcherThread(MapContext<Text, CrawlDatum, Text, NutchWritable> context, AtomicInteger activeThreads, FetchItemQueues fetchQueues,
                          QueueFeeder feeder, AtomicInteger spinWaiting, AtomicLong lastRequestStart,
                          AtomicInteger errors, String segmentName, boolean parsing,
                          boolean storingContent, AtomicInteger pages, AtomicLong bytes) {
@@ -204,12 +204,12 @@ public class FetcherThread extends Thread {
                     if (feeder.isAlive() || fetchQueues.getTotalSize() > 0) {
                         LOG.debug("{} spin-waiting ...", getName());
                         // spin-wait.
-                        ((AtomicInteger) spinWaiting).incrementAndGet();
+                        spinWaiting.incrementAndGet();
                         try {
                             Thread.sleep(500);
                         } catch (Exception ignored) {
                         }
-                        ((AtomicInteger) spinWaiting).decrementAndGet();
+                        spinWaiting.decrementAndGet();
                         continue;
                     } else {
                         // all done, finish this thread
@@ -232,7 +232,7 @@ public class FetcherThread extends Thread {
                     do {
                         if (LOG.isInfoEnabled()) {
                             LOG.info("fetching {} (queue crawl delay={} ms)",
-                                    fit.url, ((FetchItemQueues) fetchQueues).getFetchItemQueue(fit.queueID).crawlDelay);
+                                    fit.url, fetchQueues.getFetchItemQueue(fit.queueID).crawlDelay);
                         }
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("redirectCount={}", redirectCount);
@@ -243,7 +243,7 @@ public class FetcherThread extends Thread {
                         BaseRobotRules rules = protocol.getRobotRules(fit.url, fit.datum);
                         if (!rules.isAllowed(fit.u.toString())) {
                             // unblock
-                            ((FetchItemQueues) fetchQueues).finishFetchItem(fit, true);
+                            fetchQueues.finishFetchItem(fit, true);
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Denied by robots.txt: {}", fit.url);
                             }
@@ -256,7 +256,7 @@ public class FetcherThread extends Thread {
                         if (rules.getCrawlDelay() > 0) {
                             if (rules.getCrawlDelay() > maxCrawlDelay && maxCrawlDelay >= 0) {
                                 // unblock
-                                ((FetchItemQueues) fetchQueues).finishFetchItem(fit, true);
+                                fetchQueues.finishFetchItem(fit, true);
                                 LOG.debug("Crawl-Delay for {} too long ({}), skipping",
                                         rules.getCrawlDelay(), fit.url);
                                 output(fit.url, fit.datum, null,
@@ -265,7 +265,7 @@ public class FetcherThread extends Thread {
                                 robotsDeniedMaxCrawlDelay.increment(1);
                                 continue;
                             } else {
-                                FetchItemQueue fiq = ((FetchItemQueues) fetchQueues)
+                                FetchItemQueue fiq = fetchQueues
                                         .getFetchItemQueue(fit.queueID);
                                 fiq.crawlDelay = rules.getCrawlDelay();
                                 if (LOG.isDebugEnabled()) {
@@ -280,9 +280,9 @@ public class FetcherThread extends Thread {
                                 fit.datum);
                         ProtocolStatus status = output.getStatus();
                         Content content = output.getContent();
-                        ParseStatus pstatus = null;
+                        ParseStatus parseStatus;
                         // unblock queue
-                        ((FetchItemQueues) fetchQueues).finishFetchItem(fit);
+                        fetchQueues.finishFetchItem(fit);
 
                         String urlString = fit.url.toString();
 
@@ -299,18 +299,18 @@ public class FetcherThread extends Thread {
 
                             case ProtocolStatus.WOULDBLOCK:
                                 // retry ?
-                                ((FetchItemQueues) fetchQueues).addFetchItem(fit);
+                                fetchQueues.addFetchItem(fit);
                                 break;
 
                             case ProtocolStatus.SUCCESS: // got a page
-                                pstatus = output(fit.url, fit.datum, content, status,
+                                parseStatus = output(fit.url, fit.datum, content, status,
                                         CrawlDatum.STATUS_FETCH_SUCCESS, fit.outlinkDepth);
                                 updateStatus(content.getContent().length);
-                                if (pstatus != null && pstatus.isSuccess()
-                                        && pstatus.getMinorCode() == ParseStatus.SUCCESS_REDIRECT) {
-                                    String newUrl = pstatus.getMessage();
-                                    int refreshTime = Integer.valueOf(pstatus.getArgs()[1]);
-                                    Text redirUrl = handleRedirect(fit.url, fit.datum, urlString,
+                                if (parseStatus != null && parseStatus.isSuccess()
+                                        && parseStatus.getMinorCode() == ParseStatus.SUCCESS_REDIRECT) {
+                                    String newUrl = parseStatus.getMessage();
+                                    int refreshTime = Integer.valueOf(parseStatus.getArgs()[1]);
+                                    Text redirUrl = handleRedirect(fit.datum, urlString,
                                             newUrl, refreshTime < Fetcher.PERM_REFRESH_TIME,
                                             Fetcher.CONTENT_REDIR);
                                     if (redirUrl != null) {
@@ -332,7 +332,7 @@ public class FetcherThread extends Thread {
                                 }
                                 output(fit.url, fit.datum, content, status, code);
                                 String newUrl = status.getMessage();
-                                Text redirUrl = handleRedirect(fit.url, fit.datum, urlString,
+                                Text redirUrl = handleRedirect(fit.datum, urlString,
                                         newUrl, temp, Fetcher.PROTOCOL_REDIR);
                                 if (redirUrl != null) {
                                     queueRedirect(redirUrl, fit);
@@ -344,7 +344,7 @@ public class FetcherThread extends Thread {
 
                             case ProtocolStatus.EXCEPTION:
                                 logError(fit.url, status.getMessage());
-                                int killedURLs = ((FetchItemQueues) fetchQueues).checkExceptionThreshold(fit
+                                int killedURLs = fetchQueues.checkExceptionThreshold(fit
                                         .getQueueID());
                                 if (killedURLs != 0)
                                     aboveExceptionThresholdInQueue.increment(killedURLs);
@@ -377,7 +377,7 @@ public class FetcherThread extends Thread {
                         }
 
                         if (redirecting && redirectCount > maxRedirect) {
-                            ((FetchItemQueues) fetchQueues).finishFetchItem(fit);
+                            fetchQueues.finishFetchItem(fit);
                             if (LOG.isInfoEnabled()) {
                                 LOG.info(" - redirect count exceeded {}", fit.url);
                             }
@@ -390,7 +390,7 @@ public class FetcherThread extends Thread {
 
                 } catch (Throwable t) { // unexpected exception
                     // unblock
-                    ((FetchItemQueues) fetchQueues).finishFetchItem(fit);
+                    fetchQueues.finishFetchItem(fit);
                     logError(fit.url, StringUtils.stringifyException(t));
                     output(fit.url, fit.datum, null, ProtocolStatus.STATUS_FAILED,
                             CrawlDatum.STATUS_FETCH_RETRY);
@@ -403,13 +403,13 @@ public class FetcherThread extends Thread {
             }
         } finally {
             if (fit != null)
-                ((FetchItemQueues) fetchQueues).finishFetchItem(fit);
+                fetchQueues.finishFetchItem(fit);
             activeThreads.decrementAndGet(); // count threads
             LOG.info("-finishing thread {}, activeThreads={}", getName(), activeThreads);
         }
     }
 
-    private Text handleRedirect(Text url, CrawlDatum datum, String urlString,
+    private Text handleRedirect(CrawlDatum datum, String urlString,
                                 String newUrl, boolean temp, String redirType)
             throws MalformedURLException, URLFilterException {
         newUrl = normalizers.normalize(newUrl, URLNormalizers.SCOPE_FETCHER);
@@ -432,7 +432,7 @@ public class FetcherThread extends Thread {
 
         if (newUrl != null && !newUrl.equals(urlString)) {
             reprUrl = URLUtil.chooseRepr(reprUrl, newUrl, temp);
-            url = new Text(newUrl);
+            Text url = new Text(newUrl);
             if (maxRedirect > 0) {
                 redirecting = true;
                 redirectCount++;
@@ -626,8 +626,8 @@ public class FetcherThread extends Thread {
                     int validCount = 0;
 
                     // Process all outlinks, normalize, filter and deduplicate
-                    List<Outlink> outlinkList = new ArrayList<Outlink>(outlinksToStore);
-                    HashSet<String> outlinks = new HashSet<String>(outlinksToStore);
+                    List<Outlink> outlinkList = new ArrayList<>(outlinksToStore);
+                    HashSet<String> outlinks = new HashSet<>(outlinksToStore);
                     for (int i = 0; i < links.length && validCount < outlinksToStore; i++) {
                         String toUrl = links[i].getToUrl();
 
@@ -677,7 +677,7 @@ public class FetcherThread extends Thread {
                             FetchItem fit = FetchItem.create(new Text(followUrl),
                                     new CrawlDatum(CrawlDatum.STATUS_LINKED, interval),
                                     queueMode, outlinkDepth + 1);
-                            ((FetchItemQueues) fetchQueues).addFetchItem(fit);
+                            fetchQueues.addFetchItem(fit);
 
                             outlinkCounter++;
                         }

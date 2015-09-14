@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>nutch</artifactId>
+        <groupId>org.apache.nutch</groupId>
+        <version>2.7.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>nutch-job</artifactId>
+    <version>2.7.1</version>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>nutch-runtime</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>creativecommons</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>feed</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>headings</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>index-anchor</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>index-basic</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>indexer-dummy</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>indexer-elastic</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>indexer-solr</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>index-geoip</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>index-metadata</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>index-more</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>index-replace</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>index-static</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>language-identifier</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>lib-http</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>lib-nekohtml</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>lib-regex-filter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>lib-selenium</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>lib-xml</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>microformats-reltag</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>mimetype-filter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>nutch-extensionpoints</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>parse-ext</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>parsefilter-naivebayes</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>parse-html</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>parse-js</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>parse-metatags</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>parse-replace</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>parse-swf</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>parse-tika</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>parse-zip</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>protocol-file</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>protocol-ftp</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>protocol-http</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>protocol-httpclient</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>protocol-interactiveselenium</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>protocol-selenium</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>scoring-depth</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>scoring-link</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>scoring-opic</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>scoring-similarity</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>subcollection</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>tld</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlfilter-automaton</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlfilter-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlfilter-domainblacklist</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlfilter-prefix</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlfilter-regex</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlfilter-suffix</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlfilter-validator</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlmeta</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlnormalizer-ajax</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlnormalizer-basic</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlnormalizer-host</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlnormalizer-pass</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlnormalizer-querystring</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlnormalizer-regex</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.nutch</groupId>
+            <artifactId>urlnormalizer-slash</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <excludeArtifactGroups>
+                                org.apache.hadoop,
+                                org.apache.zookeeper,
+                                org.apache.avro,
+                                org.apache.maven,
+                                org.apache.httpcomponents,
+                                com.thoughtworks.xstream,
+                                org.apache.mrunit
+                            </excludeArtifactGroups>
+                            <excludeArtifactIds>
+                                jmxri,
+                                jms,
+                                jmxtools,
+                                junit,
+                                log4j,
+                                guice,
+                                xz,
+                                jersey-core,
+                                jackson-mapper-asl,
+                                javax.inject,
+                                asm,
+                                aopalliance,
+                                avro,
+                                commons-io,
+                                netty,
+                                protobuf-java,
+                                commons-compress,
+                                hadoop-annotations,
+                                hamcrest-core,
+                                paranamer,
+                                leveldbjni-all,
+                                guice-servlet,
+                                jersey-guice,
+                                jackson-core-asl,
+                                snappy-java,
+                                jersey-server
+                            </excludeArtifactIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>lib/</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+
+
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${pom.basedir}/../conf</directory>
+                <includes>
+                    <include>*</include>
+                </includes>
+                <excludes>
+                    <exclude>*.template</exclude>
+                </excludes>
+            </resource>
+
+            <resource>
+                <filtering>true</filtering>
+                <targetPath>plugins</targetPath>
+                <directory>${pom.basedir}/../nutch-plugins</directory>
+                <includes>
+                    <include>**/plugin.xml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+</project>
+

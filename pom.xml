@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.apache.nutch</groupId>
+    <artifactId>nutch</artifactId>
+    <version>2.7.1</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <packaging>pom</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>nutch-runtime</module>
+        <module>nutch-plugins</module>
+        <module>runtime</module>
+        <!--<module>plugins/creativecommons</module>-->
+        <!--<module>plugins/feed</module>-->
+        <!--<module>plugins/headings</module>-->
+        <!--<module>plugins/index-anchor</module>-->
+        <!--<module>plugins/index-basic</module>-->
+        <!--<module>plugins/index-geoip</module>-->
+        <!--<module>plugins/index-metadata</module>-->
+        <!--<module>plugins/index-more</module>-->
+        <!--<module>plugins/index-replace</module>-->
+        <!--<module>plugins/index-static</module>-->
+        <!--<module>plugins/indexer-dummy</module>-->
+        <!--<module>plugins/indexer-elastic</module>-->
+        <!--<module>plugins/indexer-solr</module>-->
+        <!--<module>plugins/language-identifier</module>-->
+        <!--<module>plugins/lib-http</module>-->
+        <!--<module>plugins/lib-nekohtml</module>-->
+        <!--<module>plugins/lib-regex-filter</module>-->
+        <!--<module>plugins/lib-selenium</module>-->
+        <!--<module>plugins/lib-xml</module>-->
+        <!--<module>plugins/microformats-reltag</module>-->
+        <!--<module>plugins/mimetype-filter</module>-->
+        <!--<module>plugins/nutch-extensionpoints</module>-->
+        <!--<module>plugins/parse-ext</module>-->
+        <!--<module>plugins/parse-html</module>-->
+        <!--<module>plugins/parse-js</module>-->
+        <!--<module>plugins/parse-metatags</module>-->
+        <!--<module>plugins/parse-replace</module>-->
+        <!--<module>plugins/parse-swf</module>-->
+        <!--<module>plugins/parse-tika</module>-->
+        <!--<module>plugins/parse-zip</module>-->
+        <!--<module>plugins/parsefilter-naivebayes</module>-->
+        <!--<module>plugins/protocol-file</module>-->
+        <!--<module>plugins/protocol-ftp</module>-->
+        <!--<module>plugins/protocol-http</module>-->
+        <!--<module>plugins/protocol-httpclient</module>-->
+        <!--<module>plugins/protocol-interactiveselenium</module>-->
+        <!--<module>plugins/protocol-selenium</module>-->
+        <!--<module>plugins/scoring-depth</module>-->
+        <!--<module>plugins/scoring-link</module>-->
+        <!--<module>plugins/scoring-opic</module>-->
+        <!--<module>plugins/subcollection</module>-->
+        <!--<module>plugins/tld</module>-->
+        <!--<module>plugins/urlfilter-automaton</module>-->
+        <!--<module>plugins/urlfilter-domain</module>-->
+        <!--<module>plugins/urlfilter-domainblacklist</module>-->
+        <!--<module>plugins/urlfilter-prefix</module>-->
+        <!--<module>plugins/urlfilter-regex</module>-->
+        <!--<module>plugins/urlfilter-suffix</module>-->
+        <!--<module>plugins/urlfilter-validator</module>-->
+        <!--<module>plugins/urlmeta</module>-->
+        <!--<module>plugins/urlnormalizer-ajax</module>-->
+        <!--<module>plugins/urlnormalizer-basic</module>-->
+        <!--<module>plugins/urlnormalizer-host</module>-->
+        <!--<module>plugins/urlnormalizer-pass</module>-->
+        <!--<module>plugins/urlnormalizer-querystring</module>-->
+        <!--<module>plugins/urlnormalizer-regex</module>-->
+        <!--<module>plugins/urlnormalizer-slash</module>-->
+    </modules>
+
+</project>

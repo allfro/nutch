@@ -6,3 +6,7 @@ build/
 runtime/
 logs/
 /bin/
+.idea
+*.iml
+**/*.iml
+**/dependency-reduced-pom.xml
